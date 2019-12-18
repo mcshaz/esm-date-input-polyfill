@@ -576,20 +576,26 @@
 
     _createClass(Input, [{
       key: "setLocaleText",
-      value: function setLocaleText(preference) {
-        var supportedLocales = {}; // could use an ES map, but that would add a polyfill
+      value: function setLocaleText(elementLang) {
+        var supportedLocales = {}; // could use an ES map, but that would add a polyfill with extraneous features
 
         Object.keys(locales).forEach(function (ls) {
           ls.toLowerCase().split('_').forEach(function (l) {
             return supportedLocales[l] = locales[ls];
           });
         });
-        var preferredLocales = (preference ? [preference] : []).concat(window.navigator.languages || [window.navigator.userLanguage || window.navigator.language]);
+        var preferredLocales = window.navigator.languages || [window.navigator.userLanguage || window.navigator.language]; // user browser preference 1st then element language - arguably should unshift here, or could get complex and 
+        // differentiate element language only (length===2) from language and culture both defined on a containing element
+
+        preferredLocales.push(elementLang);
         preferredLocales = preferredLocales.map(function (l) {
           return l.toLowerCase();
         }); // First, look for an exact match to the provided locale.
+        // for (const pl of preferredLocales) { - with current core-js polyfills this will import Symbol polyfill, which is unnecessary bloat
 
-        for (var pl in preferredLocales) {
+        for (var i = 0; i < preferredLocales.length; ++i) {
+          var pl = preferredLocales[i];
+
           if (supportedLocales[pl]) {
             this.locale = pl;
             this.localeText = supportedLocales[pl];
@@ -599,8 +605,8 @@
 
         preferredLocales.push('en'); // If not found, look for a match to only the language.
 
-        for (var _pl in preferredLocales) {
-          var _lang = _pl.substring(0, 2);
+        for (var _i = 0; _i < preferredLocales.length; ++_i) {
+          var _lang = preferredLocales[_i].substring(0, 2);
 
           if (supportedLocales[_lang]) {
             this.locale = _lang;

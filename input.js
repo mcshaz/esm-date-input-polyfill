@@ -115,16 +115,21 @@ export default class Input {
     });
   }
 
-  setLocaleText(preference) {
-    const supportedLocales = {}; // could use an ES map, but that would add a polyfill
+  setLocaleText(elementLang) {
+    const supportedLocales = {}; // could use an ES map, but that would add a polyfill with extraneous features
     Object.keys(locales).forEach((ls) => {
       ls.toLowerCase().split('_').forEach((l) => supportedLocales[l] = locales[ls]);
     });
-    let preferredLocales = (preference ? [ preference ] : [])
-      .concat(window.navigator.languages || [ window.navigator.userLanguage || window.navigator.language ]);
+    let preferredLocales = window.navigator.languages || [ window.navigator.userLanguage || window.navigator.language ];
+    // user browser preference 1st then element language - arguably should unshift here, or could get complex and 
+    // differentiate element language only (length===2) from language and culture both defined on a containing element
+    preferredLocales.push(elementLang); 
+
     preferredLocales = preferredLocales.map((l) => l.toLowerCase());
     // First, look for an exact match to the provided locale.
-    for (const pl in preferredLocales) {
+    // for (const pl of preferredLocales) { - with current core-js polyfills this will import Symbol polyfill, which is unnecessary bloat
+    for (let i = 0; i < preferredLocales.length; ++i) {
+      const pl = preferredLocales[i];
       if (supportedLocales[pl]) {
         this.locale = pl;
         this.localeText = supportedLocales[pl];
@@ -133,8 +138,8 @@ export default class Input {
     }
     preferredLocales.push('en');
     // If not found, look for a match to only the language.
-    for (const pl in preferredLocales) {
-      const lang = pl.substring(0,2);
+    for (let i = 0; i < preferredLocales.length; ++i) {
+      const lang = preferredLocales[i].substring(0,2);
       if (supportedLocales[lang]) {
         this.locale = lang;
         this.localeText = supportedLocales[lang];

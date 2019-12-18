@@ -20,7 +20,6 @@ export default {
           targets: '> 0.15%, not dead',
           corejs: 3,
         }]],
-      // plugins: ['@babel/external-helpers']
     }),
     /*minify({
       comments: false,
