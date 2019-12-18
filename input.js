@@ -19,9 +19,7 @@ export default class Input {
       langEl = langEl.parentNode;
     }
 
-    this.locale = lang || `en`;
-
-    this.localeText = this.getLocaleText();
+	this.setLocaleText(lang);
 
     Object.defineProperties(
       this.element,
@@ -117,34 +115,32 @@ export default class Input {
     });
   }
 
-  getLocaleText() {
-    const locale = this.locale.toLowerCase();
-
+  setLocaleText(preference) {
+    const supportedLocales = {}; // could use an ES map, but that would add a polyfill
+    Object.keys(locales).forEach((ls) => {
+      ls.toLowerCase().split('_').forEach((l) => supportedLocales[l] = locales[ls]);
+    });
+    let preferredLocales = (preference ? [ preference ] : [])
+      .concat(window.navigator.languages || [ window.navigator.userLanguage || window.navigator.language ]);
+    preferredLocales = preferredLocales.map((l) => l.toLowerCase());
     // First, look for an exact match to the provided locale.
-
-    for(const localeSet in locales) {
-      const localeList = localeSet.split(`_`).map(el=>el.toLowerCase());
-
-      if(!!~localeList.indexOf(locale)) {
-        return locales[localeSet];
+    for (const pl in preferredLocales) {
+      if (supportedLocales[pl]) {
+        this.locale = pl;
+        this.localeText = supportedLocales[pl];
+        return;
       }
     }
-
+    preferredLocales.push('en');
     // If not found, look for a match to only the language.
-
-    for(const localeSet in locales) {
-      const localeList = localeSet.split(`_`).map(el=>el.toLowerCase());
-
-      if(!!~localeList.indexOf(locale.substr(0,2))) {
-        return locales[localeSet];
+    for (const pl in preferredLocales) {
+      const lang = pl.substring(0,2);
+      if (supportedLocales[lang]) {
+        this.locale = lang;
+        this.localeText = supportedLocales[lang];
+        return;
       }
     }
-
-    // If still not found, reassign locale to English and rematch.
-
-    this.locale = `en`;
-
-    return this.getLocaleText();
   }
 
   // Return false if the browser does not support input[type="date"].
