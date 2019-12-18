@@ -19,9 +19,7 @@ export default class Input {
       langEl = langEl.parentNode;
     }
 
-    this.locale = lang || `en`;
-
-    this.localeText = this.getLocaleText();
+	this.setLocaleText(lang);
 
     Object.defineProperties(
       this.element,
@@ -117,34 +115,24 @@ export default class Input {
     });
   }
 
-  getLocaleText() {
-    const locale = this.locale.toLowerCase();
-
-    // First, look for an exact match to the provided locale.
-
-    for(const localeSet in locales) {
-      const localeList = localeSet.split(`_`).map(el=>el.toLowerCase());
-
-      if(!!~localeList.indexOf(locale)) {
-        return locales[localeSet];
-      }
-    }
-
-    // If not found, look for a match to only the language.
-
-    for(const localeSet in locales) {
-      const localeList = localeSet.split(`_`).map(el=>el.toLowerCase());
-
-      if(!!~localeList.indexOf(locale.substr(0,2))) {
-        return locales[localeSet];
-      }
-    }
-
-    // If still not found, reassign locale to English and rematch.
-
-    this.locale = `en`;
-
-    return this.getLocaleText();
+  setLocaleText(preference) {
+	const supportedLocaleList = Object.keys(locales).reduce((accum, l) => {
+		accum.push(...l.toLowerCase().split('_'));
+		return accum;
+	}, []);
+	let preferredLocales = preference ? [ preference ] : [];
+	preferredLocales.push(...(window.navigator.languages || [ window.navigator.userLanguage || window.navigator.language ]));
+	preferredLocales = preferredLocales.map((l) => l.toLowerCase());
+	// First, look for an exact match to the provided locale.
+	let matchLocale = preferredLocales.find((bl) => supportedLocaleList.includes(bl));
+	if (!matchLocale) {
+		// If not found, look for a match to only the language.
+		preferredLocales = preferredLocales.map((l) => l.substring(0, 2));
+		preferredLocales.push('en'); // and en as the final backup
+		matchLocale = preferredLocales.find((bl) => supportedLocaleList.includes(bl));
+	}
+	this.locales = matchLocale;
+	this.localeText = locales[matchLocale];
   }
 
   // Return false if the browser does not support input[type="date"].

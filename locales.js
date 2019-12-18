@@ -30,7 +30,7 @@ const locales = {
     today: `Today`,
     format: `M/D/Y`
   },
-  'en-GB': {
+  'en-GB_en-AU_en-NZ': {
     days: [
       `Sun`,
       `Mon`,
