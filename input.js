@@ -4,10 +4,10 @@ import locales from './locales.js';
 export default class Input {
   constructor(input) {
     this.element = input;
-    this.element.setAttribute(`data-has-picker`, ``);
+    this.element.setAttribute(`data-has-picker`, '');
 
     let langEl = this.element,
-        lang = ``;
+        lang = '';
 
     while(langEl.parentNode) {
       lang = langEl.getAttribute(`lang`);
@@ -19,7 +19,10 @@ export default class Input {
       langEl = langEl.parentNode;
     }
 
-	this.setLocaleText(lang);
+    this.setLocaleText(lang);
+    if (!this.element.placeholder) {
+      this.element.placeholder = this.localeText.format.replace('M', 'mm').replace('D', 'dd').replace('Y', 'yyyy');
+    }
 
     Object.defineProperties(
       this.element,
@@ -28,8 +31,8 @@ export default class Input {
           get: ()=> this.element.polyfillValue,
           set: val=> {
             if(!/^\d{4}-\d{2}-\d{2}$/.test(val)) {
-              this.element.polyfillValue = ``;
-              this.element.setAttribute(`value`, ``);
+              this.element.polyfillValue = '';
+              this.element.setAttribute('value', '');
               return false;
             }
 
@@ -74,19 +77,19 @@ export default class Input {
     );
 
     // Initialize value for display.
-    this.element.value = this.element.getAttribute(`value`);
+    this.element.value = this.element.getAttribute('value');
 
     // Open the picker when the input get focus,
     // also on various click events to capture it in all corner cases.
     const showPicker = ()=> {
       Picker.instance.attachTo(this);
     };
-    this.element.addEventListener(`focus`, showPicker);
-    this.element.addEventListener(`mousedown`, showPicker);
-    this.element.addEventListener(`mouseup`, showPicker);
+    this.element.addEventListener('focus', showPicker);
+    this.element.addEventListener('mousedown', showPicker);
+    this.element.addEventListener('mouseup', showPicker);
 
     // Update the picker if the date changed manually in the input.
-    this.element.addEventListener(`keydown`, e=> {
+    this.element.addEventListener('keydown', e=> {
       const date = new Date();
 
       switch(e.keyCode) {

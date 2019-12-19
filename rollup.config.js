@@ -21,10 +21,10 @@ export default {
           corejs: 3,
         }]],
     }),
-    /*minify({
+    minify({
       comments: false,
       sourceMap: false
-    }),*/
+    }),
     sass({
       insert: true
     })

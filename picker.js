@@ -66,7 +66,7 @@ class Picker {
       if(curSel) {
         curSel.removeAttribute(`data-selected`);
       }
-      tgt.setAttribute(`data-selected`, ``);
+      tgt.setAttribute(`data-selected`, '');
 
       this.date.setDate(parseInt(tgt.textContent));
       this.setInput();
@@ -175,7 +175,7 @@ class Picker {
     for(let i = 0, len = this.input.localeText.days.length; i < len; ++i) {
       daysHeadHTML.push(`<th scope="col">${this.input.localeText.days[i]}</th>`);
     }
-    this.daysHead.innerHTML = daysHeadHTML.join(``);
+    this.daysHead.innerHTML = daysHeadHTML.join('');
 
     Picker.createRangeSelect(
       this.month,
@@ -217,7 +217,7 @@ class Picker {
       // Add a row every 7 days.
       if(i % 7 === 0) {
         matrixHTML.push(`
-          ${i !== 0 ? `</tr>` : ``}
+          ${i !== 0 ? `</tr>` : ''}
           <tr>
         `);
       }
@@ -234,13 +234,13 @@ class Picker {
       const selected = selMatrix && selDate.getDate() === dayNum;
 
       matrixHTML.push(
-        `<td data-day ${selected ? `data-selected` : ``}>
+        `<td data-day ${selected ? `data-selected` : ''}>
           ${dayNum}
         </td>`
       );
     }
 
-    this.days.innerHTML = matrixHTML.join(``);
+    this.days.innerHTML = matrixHTML.join('');
   }
 
   pingInput() {
@@ -266,7 +266,7 @@ class Picker {
   }
 
   static createRangeSelect(theSelect, min, max, namesArray, selectedValue) {
-    theSelect.innerHTML = ``;
+    theSelect.innerHTML = '';
 
     for(let i = min; i <= max; ++i) {
       const aOption = document.createElement(`option`);
