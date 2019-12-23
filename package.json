@@ -4,9 +4,10 @@
   "description": "Automatically adds datepickers to input[type=date] on IE, Firefox, and macOS Safari.",
   "main": "nodep-date-input-polyfill.dist.js",
   "scripts": {
-    "start": "rollup -c -w & httpster",
+    "start": "rollup -c -w & httpster -p 8080",
     "start-c9": "rollup -c -w & httpster -p $PORT",
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "serve": "httpster -p 8080"
   },
   "author": {
     "name": "Brian Blakely",
@@ -30,11 +31,13 @@
   "analyze": true,
   "license": "MIT",
   "devDependencies": {
-    "@babel/preset-env": "^7.7.6",
-    "core-js": "^3.5.0",
-    "eslint": "^6.7.2",
+    "@babel/preset-env": "^7.7.7",
+    "@rollup/plugin-commonjs": "^11.0.0",
+    "@rollup/plugin-node-resolve": "^6.0.0",
+    "core-js": "^3.6.0",
+    "eslint": "^6.8.0",
     "httpster": "^1.0.4",
-    "rollup": "^1.27.13",
+    "rollup": "^1.27.14",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-babel-minify": "^9.1.1",
     "rollup-plugin-sass": "^1.2.2",

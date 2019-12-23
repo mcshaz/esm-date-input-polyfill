@@ -587,7 +587,20 @@ const locales = {
     ],
     today: 'Сегодня',
     format: 'D.M.Y'
+      return { locale: localeCpy[i], format: found[0] } ;
+    }
+    const decrSpec = decreaseLocaleSpecificity(localeCpy[i])
+    if (decrSpec) {
+      localeCpy.push(decrSpec);
+    }
   }
-};
+  return { locale: "en", format: "Y-M-D" };
+}
 
-export default locales;
+export function decreaseLocaleSpecificity(localeName) {
+  const returnVar = localeName.replace(/-[a-z0-9+]$/, '');
+  if (!returnVar || returnVar === localeName) {
+    return null;
+  }
+  return returnVar;
+}

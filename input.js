@@ -1,5 +1,5 @@
 import Picker from './picker.js';
-import locales from './locales.js';
+import { getLanguageInfo } from './languages.js';
 
 export default class Input {
   constructor(input) {
@@ -33,7 +33,7 @@ export default class Input {
             if(!/^\d{4}-\d{2}-\d{2}$/.test(val)) {
               this.element.polyfillValue = '';
               this.element.setAttribute('value', '');
-              return false;
+              return;
             }
 
             this.element.polyfillValue = val;
@@ -119,53 +119,17 @@ export default class Input {
   }
 
   setLocaleText(elementLang) {
-    const supportedLocales = {}; // could use an ES map, but that would add a polyfill with extraneous features
-    Object.keys(locales).forEach((ls) => {
-      ls.toLowerCase().split('_').forEach((l) => supportedLocales[l] = locales[ls]);
-    });
     let preferredLocales = window.navigator.languages || [ window.navigator.userLanguage || window.navigator.language ];
     // user browser preference 1st then element language - arguably should unshift here, or could get complex and 
     // differentiate element language only (length===2) from language and culture both defined on a containing element
     preferredLocales.push(elementLang); 
 
-    preferredLocales = preferredLocales.map((l) => l.toLowerCase());
+    const li = getLanguageInfo(preferredLocales);
     // First, look for an exact match to the provided locale.
     // for (const pl of preferredLocales) { - with current core-js polyfills this will import Symbol polyfill, which is unnecessary bloat
-    for (let i = 0; i < preferredLocales.length; ++i) {
-      const pl = preferredLocales[i];
-      if (supportedLocales[pl]) {
-        this.locale = pl;
-        this.localeText = supportedLocales[pl];
-        return;
-      }
-    }
-    preferredLocales.push('en');
-    // If not found, look for a match to only the language.
-    for (let i = 0; i < preferredLocales.length; ++i) {
-      const lang = preferredLocales[i].substring(0,2);
-      if (supportedLocales[lang]) {
-        this.locale = lang;
-        this.localeText = supportedLocales[lang];
-        return;
-      }
-    }
-  }
 
-  // Return false if the browser does not support input[type="date"].
-  static supportsDateInput() {
-    const input = document.createElement(`input`);
-    input.setAttribute(`type`, `date`);
-
-    const notADateValue = `not-a-date`;
-    input.setAttribute(`value`, notADateValue);
-
-    return (
-      (
-        document.currentScript
-        && !document.currentScript.hasAttribute(`data-nodep-date-input-polyfill-debug`)
-      )
-      && !(input.value === notADateValue)
-    );
+    this.locale = li.locale;
+    this.localeText = li;
   }
 
   // Will add the Picker to all inputs in the page.

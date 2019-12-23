@@ -1,3 +1,5 @@
+import './nodep-date-input-polyfill.scss';
+
 class Picker {
   constructor() {
     // This is a singleton.
