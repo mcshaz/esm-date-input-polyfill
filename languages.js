@@ -7,11 +7,11 @@ export function getLanguageInfo(localeNames) {
     let l = fmt.locale;
     while (!(language = languages[l])) {
         l = decreaseLocaleSpecificity(l);
-        if (!l) {
-            language = languages['en']; // shouldn't get to here - possibly throw an error?
-        }
     }
-    Object.apply(fmt, language);
+    if (!language) {
+        language = languages['en']; // shouldn't get to here - possibly throw an error?
+    }
+    return Object.assign(fmt, language);
 }
 
 function getLanguages() {

@@ -4,13 +4,13 @@ import { getLanguageInfo } from './languages.js';
 export default class Input {
   constructor(input) {
     this.element = input;
-    this.element.setAttribute(`data-has-picker`, '');
+    this.element.setAttribute('data-has-picker', '');
 
     let langEl = this.element,
         lang = '';
 
     while(langEl.parentNode) {
-      lang = langEl.getAttribute(`lang`);
+      lang = langEl.getAttribute('lang');
 
       if(lang) {
         break;
@@ -119,10 +119,12 @@ export default class Input {
   }
 
   setLocaleText(elementLang) {
-    let preferredLocales = window.navigator.languages || [ window.navigator.userLanguage || window.navigator.language ];
+    let preferredLocales = window.navigator.languages
+      ? [...window.navigator.languages]
+      : [ window.navigator.userLanguage || window.navigator.language ];
     // user browser preference 1st then element language - arguably should unshift here, or could get complex and 
     // differentiate element language only (length===2) from language and culture both defined on a containing element
-    preferredLocales.push(elementLang); 
+    if (elementLang) { preferredLocales.push(elementLang); }
 
     const li = getLanguageInfo(preferredLocales);
     // First, look for an exact match to the provided locale.

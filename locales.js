@@ -46,7 +46,7 @@ export function getLocaleFormat(localeNames) {
 }
 
 export function decreaseLocaleSpecificity(localeName) {
-  const returnVar = localeName.replace(/-[a-z0-9+]$/, '');
+  const returnVar = localeName.replace(/-[a-z0-9]+$/, '');
   if (!returnVar || returnVar === localeName) {
     return null;
   }
