@@ -6,7 +6,6 @@
     <title>NW Newborn Clinical Guideline - Gestational Age Calculator</title>
     <link rel="stylesheet" href="../guidelinestyle.css" type="text/css" media="all">
     <link rel="stylesheet" href="src/main.css" type="text/css" media="all">
-    <link rel="stylesheet" href="scr/picker.css" type="text/css" media="all">
     <style>
         .lmp {
             color:darkgreen;
@@ -52,7 +51,9 @@
         </form>
     </center>
     <script src="../../GuidelineScript.js" type="text/javascript"></script>
-    <script src="dist/nodep-date-input-polyfill-required.dist.js">
+    <script>
+        /*MIT licence - https://github.com/brianblakely/nodep-date-input-polyfill*/
+(function(){'use strict';var datePolyfillSrc="nodep-date-input-pollyfill.dist.js";(function(){var a=document.createElement("input");a.setAttribute("type","date");return a.setAttribute("value","not-a-date"),document.currentScript&&!document.currentScript.hasAttribute("data-nodep-date-input-polyfill-debug")&&"not-a-date"!==a.value})()||function(a,b){var c=document.createElement("script");c.src=a,c.onload=function(){b()},c.onerror=function(){throw new Error("Failed to load script "+a)},document.head.appendChild(c)}(datePolyfillSrc,function(){if("complete"===document.readyState)datePolyfill.addPickers();else{var a=!1;document.addEventListener("DOMContentLoaded",function(){a=!0,datePolyfill.addPickers()}),window.addEventListener("load",function(){a||datePolyfill.addPickers()})}})})();
     </script>
     <script type="text/javascript">
         (function() {
