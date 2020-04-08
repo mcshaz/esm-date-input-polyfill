@@ -27,6 +27,9 @@ export default class Input {
     Object.defineProperties(
       this.element,
       {
+        'textValue': {
+          get: Object.getOwnPropertyDescriptor(Object.getPrototypeOf(this.element), 'value').get
+        },
         'value': {
           get: ()=> this.element.polyfillValue,
           set: val=> {
@@ -38,15 +41,19 @@ export default class Input {
 
             this.element.polyfillValue = val;
 
-            const YMD = val.split(`-`);
+            if (val === 'NaN' || val === '') {
+              this.element.setAttribute(`value`, '');
+            } else {
+              const YMD = val.split(`-`);
 
-            this.element.setAttribute(
-              `value`,
-              this.localeText.format
-                .replace(`Y`, YMD[0])
-                .replace(`M`, YMD[1])
-                .replace(`D`, YMD[2])
-            );
+              this.element.setAttribute(
+                `value`,
+                this.localeText.format
+                  .replace(`Y`, YMD[0])
+                  .replace(`M`, YMD[1])
+                  .replace(`D`, YMD[2])
+              );
+            }
           }
         },
         'valueAsDate': {
@@ -58,7 +65,13 @@ export default class Input {
             return new Date(this.element.polyfillValue);
           },
           set: val=> {
-            this.element.value = val.toISOString().slice(0,10);
+            if (val === null) {
+              this.element.value = '';
+            } else if (isNaN(val.getTime())) {
+              this.element.value = 'NaN';
+            } else {
+              this.element.value = val.toISOString().slice(0,10);
+            }
           }
         },
         'valueAsNumber': {
@@ -90,31 +103,36 @@ export default class Input {
 
     // Update the picker if the date changed manually in the input.
     this.element.addEventListener('keydown', e=> {
-      const date = new Date();
-
+      const dt = new Date();
+      console.log(this.element);
+      console.log(this.element.textValue);
       switch(e.keyCode) {
+        case 9:
         case 27:
           Picker.instance.hide();
           break;
         case 38:
-          if(this.element.valueAsDate) {
-            date.setDate(this.element.valueAsDate.getDate() + 1);
-            this.element.valueAsDate = date;
+          if (this.element.valueAsDate) {
+            dt.setDate(this.element.valueAsDate.getDate() + 1);
+            this.element.valueAsDate = dt;
             Picker.instance.pingInput();
           }
           break;
         case 40:
-          if(this.element.valueAsDate) {
-            date.setDate(this.element.valueAsDate.getDate() - 1);
-            this.element.valueAsDate = date;
+          if (this.element.valueAsDate) {
+            dt.setDate(this.element.valueAsDate.getDate() - 1);
+            this.element.valueAsDate = dt;
             Picker.instance.pingInput();
           }
           break;
         default:
-          break;
       }
-
-      Picker.instance.sync();
+      setTimeout(() => {
+        if (this.element.textValue.trim() === '') {
+          this.element.valueAsDate = null;
+        }
+        Picker.instance.sync();
+      }, 1)
     });
   }
 

@@ -1,5 +1,5 @@
 import babel from 'rollup-plugin-babel';
-import minify from 'rollup-plugin-babel-minify';
+import { terser } from "rollup-plugin-terser";
 import sass from 'rollup-plugin-sass';
 import 'core-js';
 import resolve from '@rollup/plugin-node-resolve';
@@ -23,10 +23,8 @@ export default [{
           corejs: 3,
         }]],
     }),
-    minify({
-      comments: false,
-      sourceMap: false,
-      banner: '//MIT licence - https://github.com/brianblakely/nodep-date-input-polyfill\n'
+    terser({
+      sourcemap: false,
     }),
     sass({
       insert: true
@@ -38,7 +36,8 @@ export default [{
   output: {
     file: 'dist/nodep-date-input-pollyfill.dist.js',
     format: 'iife',
-    name: 'datePolyfill'
+    name: 'datePolyfill',
+    sourcemap: 'inline'
   },
   plugins: [
     babel({
@@ -49,14 +48,13 @@ export default [{
         {
           modules: false,
           useBuiltIns: 'usage',
-          targets: {ie: "9" }, //'> 0.15%, not dead',
+          targets: {ie: "11" }, //'> 0.15%, not dead',
           corejs: 3,
         }]],
     }),
-    minify({
-      comments: false,
-      sourceMap: false,
-      banner: '//MIT licence - https://github.com/brianblakely/nodep-date-input-polyfill\n'
+    terser({
+      sourcemap: true,
+      output: { preamble: '// @license MIT - https://github.com/brianblakely/nodep-date-input-polyfill' },
     }),
     sass({
       insert: true

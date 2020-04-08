@@ -52,8 +52,7 @@
     </center>
     <script src="../../GuidelineScript.js" type="text/javascript"></script>
     <script>
-        /*MIT licence - https://github.com/brianblakely/nodep-date-input-polyfill*/
-(function(){'use strict';var datePolyfillSrc="nodep-date-input-pollyfill.dist.js";(function(){var a=document.createElement("input");a.setAttribute("type","date");return a.setAttribute("value","not-a-date"),document.currentScript&&!document.currentScript.hasAttribute("data-nodep-date-input-polyfill-debug")&&"not-a-date"!==a.value})()||function(a,b){var c=document.createElement("script");c.src=a,c.onload=function(){b()},c.onerror=function(){throw new Error("Failed to load script "+a)},document.head.appendChild(c)}(datePolyfillSrc,function(){if("complete"===document.readyState)datePolyfill.addPickers();else{var a=!1;document.addEventListener("DOMContentLoaded",function(){a=!0,datePolyfill.addPickers()}),window.addEventListener("load",function(){a||datePolyfill.addPickers()})}})})();
+(function(){'use strict';var datePolyfillSrc="./dist/nodep-date-input-pollyfill.dist.js";(function(){var a=document.createElement("input");a.setAttribute("type","date");return a.setAttribute("value","not-a-date"),document.currentScript&&!document.currentScript.hasAttribute("data-nodep-date-input-polyfill-debug")&&"not-a-date"!==a.value})()||function(a,b){var c=document.createElement("script");c.src=a,c.onload=function(){b()},c.onerror=function(){throw new Error("Failed to load script "+a)},document.head.appendChild(c)}(datePolyfillSrc,function(){if("complete"===document.readyState)datePolyfill.addPickers();else{var a=!1;document.addEventListener("DOMContentLoaded",function(){a=!0,datePolyfill.addPickers()}),window.addEventListener("load",function(){a||datePolyfill.addPickers()})}})})();
     </script>
     <script type="text/javascript">
         (function() {
@@ -63,8 +62,14 @@
             const msPerDay = 86400000;
             const termGestMs = 24192000000; // 40 weeks in ms
             const setValues = function() {
-                if (!targetDateEl.valueAsDate) { setTargetNow(); }
-                elChange({target: targetDateEl});
+                if (!('valueAsDate' in targetDateEl)) {
+                    setTimeout(setValues, 1);
+                } else {
+                    if (targetDateEl.valueAsDate === null) {
+                        setTargetNow(); 
+                    }
+                    elChange({target: targetDateEl});
+                }
             }
             if ('valueAsDate' in targetDateEl) {
                 setValues();
