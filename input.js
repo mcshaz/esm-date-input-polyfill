@@ -23,18 +23,19 @@ export default class Input {
     if (!this.element.placeholder) {
       this.element.placeholder = this.localeText.format.replace('M', 'mm').replace('D', 'dd').replace('Y', 'yyyy');
     }
-
+    const valuePropDescriptor =  Object.getOwnPropertyDescriptor(Object.getPrototypeOf(this.element), 'value');
     Object.defineProperties(
       this.element,
       {
         'textValue': {
-          get: Object.getOwnPropertyDescriptor(Object.getPrototypeOf(this.element), 'value').get
+          get: valuePropDescriptor.get,
+          set: valuePropDescriptor.set
         },
         'value': {
           get: ()=> this.element.polyfillValue,
           set: val=> {
             if(!/^\d{4}-\d{2}-\d{2}$/.test(val)) {
-              this.element.polyfillValue = '';
+              this.element.polyfillValue = this.element.textValue  = '';
               this.element.setAttribute('value', '');
               return;
             }
@@ -42,14 +43,15 @@ export default class Input {
             this.element.polyfillValue = val;
 
             const YMD = val.split(`-`);
-
+            this.element.textValue = this.localeText.format
+              .replace(`Y`, YMD[0])
+              .replace(`M`, YMD[1])
+              .replace(`D`, YMD[2]);
             this.element.setAttribute(
               `value`,
-              this.localeText.format
-                .replace(`Y`, YMD[0])
-                .replace(`M`, YMD[1])
-                .replace(`D`, YMD[2])
+              this.element.textValue
             );
+            
           }
         },
         'valueAsDate': {
