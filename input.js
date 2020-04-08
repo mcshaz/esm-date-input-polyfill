@@ -41,19 +41,15 @@ export default class Input {
 
             this.element.polyfillValue = val;
 
-            if (val === 'NaN' || val === '') {
-              this.element.setAttribute(`value`, '');
-            } else {
-              const YMD = val.split(`-`);
+            const YMD = val.split(`-`);
 
-              this.element.setAttribute(
-                `value`,
-                this.localeText.format
-                  .replace(`Y`, YMD[0])
-                  .replace(`M`, YMD[1])
-                  .replace(`D`, YMD[2])
-              );
-            }
+            this.element.setAttribute(
+              `value`,
+              this.localeText.format
+                .replace(`Y`, YMD[0])
+                .replace(`M`, YMD[1])
+                .replace(`D`, YMD[2])
+            );
           }
         },
         'valueAsDate': {
@@ -65,10 +61,8 @@ export default class Input {
             return new Date(this.element.polyfillValue);
           },
           set: val=> {
-            if (val === null) {
+            if (val === null || isNaN(val.getTime())) { // this is not quite native function where 
               this.element.value = '';
-            } else if (isNaN(val.getTime())) {
-              this.element.value = 'NaN';
             } else {
               this.element.value = val.toISOString().slice(0,10);
             }
@@ -103,36 +97,47 @@ export default class Input {
 
     // Update the picker if the date changed manually in the input.
     this.element.addEventListener('keydown', e=> {
-      const dt = new Date();
-      console.log(this.element);
-      console.log(this.element.textValue);
+      let beginValue = this.element.valueAsDate;
+      let requirePing = true;
+      let requireParse = false;
       switch(e.keyCode) {
         case 9:
         case 27:
           Picker.instance.hide();
+          requirePing = false;
           break;
         case 38:
-          if (this.element.valueAsDate) {
-            dt.setDate(this.element.valueAsDate.getDate() + 1);
-            this.element.valueAsDate = dt;
-            Picker.instance.pingInput();
-          }
+          if (beginValue === null) { beginValue = new Date(); }
+          beginValue.setDate(beginValue.getDate() + 1);
+          this.element.valueAsDate = beginValue;
           break;
         case 40:
-          if (this.element.valueAsDate) {
-            dt.setDate(this.element.valueAsDate.getDate() - 1);
-            this.element.valueAsDate = dt;
-            Picker.instance.pingInput();
-          }
+          if (beginValue === null) { beginValue = new Date(); }
+          beginValue.setDate(beginValue.getDate() - 1);
+          this.element.valueAsDate = beginValue;
           break;
         default:
+          requireParse = true;
       }
-      setTimeout(() => {
-        if (this.element.textValue.trim() === '') {
-          this.element.valueAsDate = null;
+      if (requirePing) {
+        if (requireParse) {
+          const self = this;
+          setTimeout(() => {
+            const parseDt = self.localeText.parseLocale(self.element.textValue);
+            if (parseDt) {
+              parseDt.setTime(parseDt.getTime() - parseDt.getTimezoneOffset() * 60000);
+            }
+            if (+parseDt !== +self.element.valueAsDate) {
+              self.element.valueAsDate = parseDt;
+              Picker.instance.pingInput();
+              Picker.instance.sync();
+            }
+          }, 1);
+        } else {
+          Picker.instance.pingInput();
+          Picker.instance.sync();
         }
-        Picker.instance.sync();
-      }, 1)
+      }
     });
   }
 

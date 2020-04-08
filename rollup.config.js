@@ -37,7 +37,7 @@ export default [{
     file: 'dist/nodep-date-input-pollyfill.dist.js',
     format: 'iife',
     name: 'datePolyfill',
-    sourcemap: 'inline'
+    sourcemap: true
   },
   plugins: [
     babel({

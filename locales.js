@@ -35,14 +35,15 @@ export function getLocaleFormat(localeNames) {
     const srchStr = '_' + localeCpy[i] + '_';
     const found = locales.find((l) => l[1].includes(srchStr));
     if (found) {
-      return { locale: localeCpy[i], format: found[0] } ;
+      return { locale: localeCpy[i], format: found[0], parseLocale: parseFromFormat(found[0]) } ;
     }
     const decrSpec = decreaseLocaleSpecificity(localeCpy[i])
     if (decrSpec) {
       localeCpy.push(decrSpec);
     }
   }
-  return { locale: "en", format: "Y-M-D" };
+  const format = "Y-M-D";
+  return { locale: "en", format, parseLocale: parseFromFormat(format) };
 }
 
 export function decreaseLocaleSpecificity(localeName) {
@@ -51,4 +52,43 @@ export function decreaseLocaleSpecificity(localeName) {
     return null;
   }
   return returnVar;
+}
+
+export function parseFromFormat(format) {
+  let yPos = format.indexOf('Y');
+  let mPos = format.indexOf('M');
+  let dPos;
+  // only 3 permutaions in use: DMY, YMD & MDY
+  if (yPos < mPos) {
+    yPos = 1;
+    mPos = 2;
+    dPos = 3;
+  } else {
+    yPos = 3;
+    dPos = format.indexOf('D');
+    if (dPos < mPos) {
+      dPos = 1;
+      mPos = 2;
+    } else {
+      mPos = 1;
+      dPos = 2;
+    }
+  }
+  format = format.replace(/\./g, '\\.')
+    .replace('Y', '([12]\\d{3})')
+    .replace('M', '([01]?\\d)')
+    .replace('D', '([0-3]?\\d)');
+  const localeDtRx = new RegExp(format);
+  return (dtStr) => {
+    const dateMatch = localeDtRx.exec(dtStr);
+    if (!dateMatch) { return null; }
+    const yr = parseInt(dateMatch[yPos], 10);
+    const mth = parseInt(dateMatch[mPos], 10) - 1;
+    const dt = parseInt(dateMatch[dPos], 10);
+    const returnVar = new Date(yr, mth, dt);
+    if (returnVar.getFullYear() !== yr || returnVar.getMonth() !== mth || returnVar.getDate() !== dt) {
+      return null;
+    }
+    return returnVar;
+  }
 }
