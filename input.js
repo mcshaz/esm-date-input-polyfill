@@ -23,7 +23,8 @@ export default class Input {
     if (!this.element.placeholder) {
       this.element.placeholder = this.localeText.format.replace('M', 'mm').replace('D', 'dd').replace('Y', 'yyyy');
     }
-    const valuePropDescriptor =  Object.getOwnPropertyDescriptor(Object.getPrototypeOf(this.element), 'value');
+    const valuePropDescriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(this.element), 'value')
+      || { get:() => this.element.getAttribute('value'), set() {} };
     Object.defineProperties(
       this.element,
       {
