@@ -1,5 +1,5 @@
-import Picker from './picker.js';
-import { getLanguageInfo } from './languages.js';
+import Picker from './Picker.mjs';
+import { getLanguageInfo } from './languages.mjs';
 
 export default class Input {
   constructor(input) {
@@ -24,7 +24,10 @@ export default class Input {
       this.element.placeholder = this.localeText.format.replace('M', 'mm').replace('D', 'dd').replace('Y', 'yyyy');
     }
     const valuePropDescriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(this.element), 'value')
-      || { get:() => this.element.getAttribute('value'), set() {} };
+    if (valuePropDescriptor === null) {
+      valuePropDescriptor = { get:() => this.element.getAttribute('value'), set() {} };
+      console.log("unable to obtain native input[type=date] .value propertyDescriptor");
+    }
     Object.defineProperties(
       this.element,
       {
@@ -64,7 +67,7 @@ export default class Input {
             return new Date(this.element.polyfillValue);
           },
           set: val=> {
-            if (val === null || isNaN(val.getTime())) { // this is not quite native function where 
+            if (val === null || isNaN(val.getTime())) {
               this.element.value = '';
             } else {
               this.element.value = val.toISOString().slice(0,10);
