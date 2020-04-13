@@ -20,14 +20,14 @@ Add to your project:
 
 * **Webpack / Rollup / Babel / ES:** `import 'nodep-date-input-polyfill';` note this script uses EcmaScript Modules [ESM] rather than common JS. This means your development machine will need Node 10.2 or greater installed. 
 
-* **Script Tag:** Copy `nodep-date-input-polyfill.js` from `node_modules` and include it anywhere in your HTML. This will use an Immediately invoked function expression (IIFE) which creates the object window.nodepDateInputPolyfill
+* **Script Tag:** Copy `nodep-date-input-polyfill.js` from `node_modules` and include it anywhere in your HTML. This will use an Immediately invoked function expression (IIFE) which creates the object `window.nodepDateInputPolyfill`
 
 ### Getting Started
 
 Execute the polyfillDateIfRequired function. The options are { watchForInsert: false, allowForcePicker: false }. The function returns a `promise`
 
 watchForInsert
-: `[default: false]` Set up a `MutationObserver` to look for dynamically inserted date-inputs. Should be false if the page does not dynamically insert DOM nodes for performance reasons. If your page heavily uses animations, it is possible this slows your page down. Originally this script had only run on mousedown event (e.g. when entering the input for the first time), which is more performant, but results in no placeholder being added until after the input has been clicked. the old code is still commented out in addPickers.js if that better suits your needs.
+: `[default: false]` Set up a `MutationObserver` to look for dynamically inserted date-inputs. Should be false if the page does not dynamically insert DOM nodes for performance reasons. If your page heavily uses animations, it is possible this slows your page down. Originally this script had only run on mousedown event (e.g. when entering the input for the first time), which is more performant, but results in no placeholder being added until after the user has clicked the mouse on the page. The old code is still commented out in addPickers.js if that better suits your needs.
 
 allowForcePicker
 : `[default: false]` Will apply the date-input polyfill _even if_ the browser natively supports date-input elements, **if** the input has any parent with a `data-nodep-date-input-polyfill-debug` attribute. In order to work, forcing the polyfill _when date inputs are natively supported_ will change the `type` attribute of the date-input from `date` to `date-polyfill`.
@@ -35,10 +35,7 @@ allowForcePicker
 Returns
 : A `promise` which is resolved after the DOM content has been loaded and all date-input elements in the document at this point have been polyfilled. If the browser supports date-inputs and `allowForcePicker` is false [default], the promise will resolve immediately.
 
- * **Webpack / Rollup / Babel / ES:** Using the module/nomodule approach. Use an entry (input) [.js or .mjs or .ts] [file for browsers which support ESM](https://github.com/mcshaz/nodep-date-input-polyfill/blob/master/gest-age.module.js), and include a
-polyfill for dynamic import. Have a [seperate entry file for legacy browsers](https://github.com/mcshaz/nodep-date-input-polyfill/blob/master/gest-age.nomodule.js). Modern browsers will only download a tiny file to check for date-input support, and download the appropriate polyfill only if date inputs are not natively supported. Older browsers will download a full executable. see https://github.com/mcshaz/nodep-date-input-polyfill/tree/master/examples and the rollup config at https://github.com/mcshaz/nodep-date-input-polyfill/blob/master/rollup.config.js.
-
-Check if the script has already been run in the common file the 2 enty files point to (a problem with Safari 10 respecting `<script type="module" src="...">` but _not_ respecting `<script nomodule src="...">`).
+ * **Webpack / Rollup / Babel / ES:** Using the module/nomodule approach. Use an entry (input) [.js or .mjs or .ts] [file for browsers which support ESM](https://github.com/mcshaz/nodep-date-input-polyfill/blob/master/gest-age.module.js), and include a polyfill for dynamic import. Have a [seperate entry file for legacy browsers](https://github.com/mcshaz/nodep-date-input-polyfill/blob/master/gest-age.nomodule.js). Modern browsers will only download a tiny file to check for date-input support, and download the appropriate polyfill only if date inputs are not natively supported. Older browsers will download a full executable. see https://github.com/mcshaz/nodep-date-input-polyfill/tree/master/examples and the rollup config at https://github.com/mcshaz/nodep-date-input-polyfill/blob/master/rollup.config.js. Check if the script has already been run in the common file the 2 enty files point to (a problem with Safari 10 respecting `<script type="module" src="...">` but _not_ respecting `<script nomodule src="...">`).
 ```javascript
 import { polyfillDateIfRequired } from './dist/polyfill-date-if-required-dynamic-import.mjs';
 if (window.__my_script_loaded) { // https://gist.github.com/samthor/64b114e4a4f539915a95b91ffd340acc
@@ -97,9 +94,9 @@ Run `npm run build`
 
 ### Features
 Given the lifecycle of browsers which do not natively support date-inputs, there no plans to add the features below, however if this project were to have a roadmap:
-- placeholdre currently uses english characters e.g. `dd/mm/yyyy`. This should clearly be language specific.
-- support min &amp; max properties and attributes by greying out and preventing click on the picker, and adding `setCustomValidity` if manually typed date is outside range.
-- potentially append a sibling input[type=hidden] with the original date-picker name, and append the original date-input id & name with something. this way data going to the server _without ajax_ i.e. simple form submit etc. will be in the `yyyy-mm-dd` form regardless of whether the browser supports date-inputs or not. The same would apply for the original `value` attribute
+- placeholder currently uses english characters e.g. `dd/mm/yyyy`. This should clearly be language specific.
+- support min &amp; max properties and attributes by greying out and preventing click on invalid dates. Add `setCustomValidity` if manually typed date is outside valid range.
+- potentially append a sibling input[type=hidden] with the original date-picker name, and append the original date-input id & name with something. this way data going to the server _without ajax_ i.e. simple form submit etc. will be in the `yyyy-mm-dd` form regardless of whether the browser supports date-inputs or not. The same would apply for the original `value` attribute.
 -separate out language files and dynamically retrieve only the 1 language file required.
 
 ## Thanks
