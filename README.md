@@ -97,7 +97,7 @@ Given the lifecycle of browsers which do not natively support date-inputs, there
 - placeholder currently uses english characters e.g. `dd/mm/yyyy`. This should clearly be language specific.
 - support min &amp; max properties and attributes by greying out and preventing click on invalid dates. Add `setCustomValidity` if manually typed date is outside valid range.
 - potentially append a sibling input[type=hidden] with the original date-picker name, and append the original date-input id & name with something. this way data going to the server _without ajax_ i.e. simple form submit etc. will be in the `yyyy-mm-dd` form regardless of whether the browser supports date-inputs or not. The same would apply for the original `value` attribute.
--separate out language files and dynamically retrieve only the 1 language file required.
+- separate out language files and dynamically retrieve only the 1 language file required.
 
 ## Thanks
 Some words of appreciation for those who have submitted tickets, pull requests,
