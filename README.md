@@ -37,16 +37,8 @@ They behave as getters and setters.
 * **Keyboard Shortcuts:** `Esc` will hide the datepicker. `Up/Down` will
 increment/decrement the date by one day.
 
-* **Localization:** Specify the datepicker's locale by setting the
-`lang` attribute of the `<input>` or any of its parent nodes.
-
-    `<input type="date" lang="en" />`
-
-    `<body lang="en">`
-
-    The default locale is `en`.
-
-    The rendered date format will automatically adhere to the given locale.
+* **Localization:** As per native `<input type="date">` implementations, this
+uses the browser default locale settings.
 
     Currently supported:
     - languages:
