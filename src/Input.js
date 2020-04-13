@@ -1,21 +1,26 @@
-import Picker from './Picker.mjs';
-import { getLanguageInfo } from './languages.mjs';
-
+import Picker from './Picker.js';
+import { getLanguageInfo } from './languages.js';
+import { pickerAppliedAttr } from './FindInputsHelper.js';
+import { dateInputIsSupported } from './dateInputIsSupported.js'
+ 
 export default class Input {
   constructor(input) {
     this.element = input;
-    this.element.setAttribute('data-has-picker', '');
+    this.element.setAttribute(pickerAppliedAttr, '');
+    if (dateInputIsSupported) {
+      // this wil both prevent the native datepicker displaying AND allow asigning a value attribute which is not ISO8601 compliant
+      this.element.type = 'date-polyfill';
+      // this.element.addEventListener('click', preventDefault);
+    }
 
     let langEl = this.element,
         lang = '';
 
     while(langEl.parentNode) {
       lang = langEl.getAttribute('lang');
-
       if(lang) {
         break;
       }
-
       langEl = langEl.parentNode;
     }
 
@@ -26,7 +31,7 @@ export default class Input {
     const valuePropDescriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(this.element), 'value')
     if (valuePropDescriptor === null) {
       valuePropDescriptor = { get:() => this.element.getAttribute('value'), set() {} };
-      console.log("unable to obtain native input[type=date] .value propertyDescriptor");
+      console.log("nodep-date-input-polyfill: unable to obtain native input[type=date] .value propertyDescriptor");
     }
     Object.defineProperties(
       this.element,
@@ -97,9 +102,10 @@ export default class Input {
     const showPicker = ()=> {
       Picker.instance.attachTo(this);
     };
-    this.element.addEventListener('focus', showPicker);
-    this.element.addEventListener('mousedown', showPicker);
-    this.element.addEventListener('mouseup', showPicker);
+    const passiveOpt = { passive: true };
+    this.element.addEventListener('focus', showPicker, passiveOpt);
+    this.element.addEventListener('mousedown', showPicker, passiveOpt);
+    this.element.addEventListener('mouseup', showPicker, passiveOpt);
 
     // Update the picker if the date changed manually in the input.
     this.element.addEventListener('keydown', e=> {
@@ -144,7 +150,7 @@ export default class Input {
           Picker.instance.sync();
         }
       }
-    });
+    }, passiveOpt);
   }
 
   setLocaleText(elementLang) {
@@ -163,18 +169,11 @@ export default class Input {
     this.localeText = li;
   }
 
-  // Will add the Picker to all inputs in the page.
-  static addPickerToDateInputs() {
-    // Get and loop all the input[type="date"]s in the page that do not have `[data-has-picker]` yet.
-    const dateInputs = document.querySelectorAll(`input[type="date"]:not([data-has-picker]):not([readonly])`);
-    const length = dateInputs.length;
-
-    if(!length) {
-      return false;
-    }
-
-    for(let i = 0; i < length; ++i) {
-      new Input(dateInputs[i]);
-    }
+  static pendingDateInputs() {
+    '[data-nodep-date-input-polyfill-debug]'
   }
+}
+
+function preventDefault(evt) {
+  evt.preventDefault();
 }

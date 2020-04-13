@@ -7,6 +7,8 @@ class Picker {
       return Picker.instance;
     }
 
+    const passiveOpt = { passive: true };
+
     this.date = new Date();
     this.input = null;
     this.isOpen = false;
@@ -27,7 +29,7 @@ class Picker {
     this.year.addEventListener(`change`, ()=> {
       this.date.setYear(this.year.value);
       this.refreshDaysMatrix();
-    });
+    }, passiveOpt);
     this.container.appendChild(this.year);
 
     // Month picker.
@@ -36,7 +38,7 @@ class Picker {
     this.month.addEventListener(`change`, ()=> {
       this.date.setMonth(this.month.value);
       this.refreshDaysMatrix();
-    });
+    }, passiveOpt);
     this.container.appendChild(this.month);
 
     // Today button.
@@ -44,9 +46,8 @@ class Picker {
     this.today.textContent = `Today`;
     this.today.addEventListener(`click`, ()=> {
       this.date = new Date();
-
       this.setInput();
-    });
+    }, passiveOpt);
     this.container.appendChild(this.today);
 
     // Setup unchanging DOM for days matrix.
@@ -72,7 +73,7 @@ class Picker {
 
       this.date.setDate(parseInt(tgt.textContent));
       this.setInput();
-    });
+    }, passiveOpt);
 
     daysMatrix.appendChild(this.daysHead);
     daysMatrix.appendChild(this.days);
@@ -82,7 +83,7 @@ class Picker {
     document.body.appendChild(this.container);
 
     // Close the picker when clicking outside of a date input or picker.
-    document.addEventListener(`click`, e=> {
+    document.addEventListener('click', e=> {
       let el = e.target;
       let isPicker = el === this.container;
 
@@ -90,19 +91,21 @@ class Picker {
         isPicker = el === this.container;
       }
 
-      e.target.getAttribute(`type`) !== `date` && !isPicker
-        && this.hide();
-    });
+      const attr = e.target.getAttribute('type');
+      if (attr !== 'date' && attr !== 'date-polyfill' && !isPicker) {
+        this.hide()
+      }
+    }, passiveOpt);
   }
 
   // Hide.
   hide() {
-    this.container.setAttribute(`data-open`, this.isOpen = false);
+    this.container.setAttribute('data-open', this.isOpen = false);
   }
 
   // Show.
   show() {
-    this.container.setAttribute(`data-open`, this.isOpen = true);
+    this.container.setAttribute('data-open', this.isOpen = true);
   }
 
   // Position picker below element. Align to element's left edge.
@@ -153,9 +156,9 @@ class Picker {
       `${
         this.date.getFullYear()
       }-${
-        `0${this.date.getMonth()+1}`.slice(-2)
+        String(this.date.getMonth() + 1).padStart(2,'0')
       }-${
-        `0${this.date.getDate()}`.slice(-2)
+        String(this.date.getDate()).padStart(2,'0')
       }`;
 
     this.input.element.focus();

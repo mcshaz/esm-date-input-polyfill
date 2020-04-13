@@ -1,6 +1,4 @@
 // Localizations for UI text.
-// Keys correspond to applicable 'lang' values, delimited by an underscore.
-// Days and months must be listed in the order they should display.
 export function getLocaleFormat(localeNames) {
   const locales = [
     ["D. M. Y",

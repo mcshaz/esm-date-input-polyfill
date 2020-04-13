@@ -25,10 +25,12 @@ function getRollupBasePlugins({ buildTarget = buildTargets.npm }) {
       use: ['sass'],
     }),
     // replace({'process.env.NODE_ENV': JSON.stringify('production')}),
+    /*
     terser({
       sourcemap: true,
       output: { preamble: '// @license MIT - https://github.com/brianblakely/nodep-date-input-polyfill' },
     }),
+    */
   ];
   if (buildTarget === buildTargets.browserModule || buildTarget === buildTargets.browserNoModule) {
     const targets = buildTarget === buildTargets.browserNoModule 
@@ -51,12 +53,13 @@ function getRollupBasePlugins({ buildTarget = buildTargets.npm }) {
 const moduleConfig = [
   // create library - note ES modules = Node >= 13.2.0
   {
-    input: 'src/polyfill-date-if-required-dynamic-import.mjs',
+    input: 'src/polyfill-date-if-required-dynamic-import.js',
     output: {
       dir: 'dist',
       format: 'esm',
       entryFileNames: '[name].mjs',
-      chunkFileNames: '[name].mjs', // not outputting the hash for now [name]-[hash].js
+      chunkFileNames: '[name]-[hash].mjs',
+      sourcemap: true,
     },
     plugins: getRollupBasePlugins({ buildTarget: buildTargets.npm }),
   },
@@ -64,7 +67,7 @@ const moduleConfig = [
   // window.nodepDateInputPolyfill
   // to polyfill run window.nodepDateInputPolyfill.polyfillDateIfRequired()
   {
-    input: 'src/polyfill-date-if-required-dynamic-import.mjs',
+    input: 'src/polyfill-date-if-required-dynamic-import.js',
     output: {
       file: 'dist/iife/nodep-date-input-polyfill.js',
       format: 'iife',
@@ -77,21 +80,22 @@ const moduleConfig = [
   // create example using library
   // Module config for <script type="module">
   {
-    input: 'gest-age.module.mjs',
+    input: 'gest-age.module.js',
     output: {
       dir: 'examples',
       format: 'esm',
       dynamicImportFunction: '__import__',
+      sourcemap: true,
     },
     plugins: getRollupBasePlugins({ buildTarget: buildTargets.browserModule }),
   },
   // Legacy config for <script nomodule>
   {
-    input: 'gest-age.nomodule.mjs',
+    input: 'gest-age.nomodule.js',
     output: {
       file: 'examples/gest-age.nomodule.js',
       format: 'iife',
-      sourcemap: true
+      sourcemap: true,
     },
     plugins: getRollupBasePlugins({ buildTarget: buildTargets.browserNoModule }),
     inlineDynamicImports: true,

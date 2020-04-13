@@ -1,4 +1,4 @@
-import { getLocaleFormat, decreaseLocaleSpecificity } from "./locales.mjs";
+import { getLocaleFormat, decreaseLocaleSpecificity } from "./locales.js";
 
 export function getLanguageInfo(localeNames) {
     const languages = getLanguages();

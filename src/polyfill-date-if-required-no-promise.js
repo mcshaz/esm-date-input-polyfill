@@ -1,4 +1,4 @@
-import { doesSupportDateInput } from './doesSupportDateInput.mjs';
+import { doesSupportDateInput } from './dateInputIsSupported.js';
 import { InsertScript } from './InsertScript';
 
 export function polyfillDateIfRequired() {
