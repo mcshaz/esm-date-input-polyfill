@@ -7,7 +7,7 @@ export function polyfillDateIfRequired({ watchForInsert = false, allowForcePicke
   if (dateInputIsSupported && !(allowForcePicker && document.querySelector(`[${forcePickerAttr}]`))) {
     return Promise.resolve();
   } else {
-    import('./addPickers.js').then((module) => {
+    return import('./addPickers.js').then((module) => {
       return new Promise((resolve, _reject) => {
         let pickerAdded = false;
         const loaded = () => {

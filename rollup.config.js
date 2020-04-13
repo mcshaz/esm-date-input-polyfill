@@ -25,12 +25,10 @@ function getRollupBasePlugins({ buildTarget = buildTargets.npm }) {
       use: ['sass'],
     }),
     // replace({'process.env.NODE_ENV': JSON.stringify('production')}),
-    /*
     terser({
       sourcemap: true,
       output: { preamble: '// @license MIT - https://github.com/brianblakely/nodep-date-input-polyfill' },
     }),
-    */
   ];
   if (buildTarget === buildTargets.browserModule || buildTarget === buildTargets.browserNoModule) {
     const targets = buildTarget === buildTargets.browserNoModule 
