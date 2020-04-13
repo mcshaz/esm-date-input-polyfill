@@ -114,6 +114,7 @@ export default class Input {
       let requireParse = false;
       switch(e.keyCode) {
         case 9:
+        case 13:
         case 27:
           Picker.instance.hide();
           requirePing = false;
