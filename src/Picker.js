@@ -1,7 +1,7 @@
 import './esm-date-input-polyfill.scss';
 
 class Picker {
-  constructor() {
+  constructor({yrsBack = 80, yrsFwd = 20} = {yrsBack: 80, yrsFwd: 20}) {
     // This is a singleton.
     if(Picker.instance) {
       return Picker.instance;
@@ -20,32 +20,32 @@ class Picker {
 
     // Add controls.
     // Year picker.
-    this.year = document.createElement(`select`);
+    this.year = document.createElement('select');
     Picker.createRangeSelect(
       this.year,
-      this.date.getFullYear() - 80,
-      this.date.getFullYear() + 20
+      this.date.getFullYear() - yrsBack,
+      this.date.getFullYear() + yrsFwd,
     );
-    this.year.className = `yearSelect`;
-    this.year.addEventListener(`change`, ()=> {
+    this.year.className = 'yearSelect';
+    this.year.addEventListener('change', ()=> {
       this.date.setYear(this.year.value);
       this.refreshDaysMatrix();
     }, passiveOpt);
     this.container.appendChild(this.year);
 
     // Month picker.
-    this.month = document.createElement(`select`);
-    this.month.className = `monthSelect`;
-    this.month.addEventListener(`change`, ()=> {
+    this.month = document.createElement('select');
+    this.month.className = 'monthSelect';
+    this.month.addEventListener('change', ()=> {
       this.date.setMonth(this.month.value);
       this.refreshDaysMatrix();
     }, passiveOpt);
     this.container.appendChild(this.month);
 
     // Today button.
-    this.today = document.createElement(`button`);
-    this.today.textContent = `Today`;
-    this.today.addEventListener(`click`, ()=> {
+    this.today = document.createElement('button');
+    this.today.textContent = 'Today';
+    this.today.addEventListener('click', ()=> {
       this.date = new Date();
       this.setInput();
     }, passiveOpt);
@@ -59,18 +59,18 @@ class Picker {
     // THIS IS THE BIG PART.
     // When the user clicks a day, set that day as the date.
     // Uses event delegation.
-    this.days.addEventListener(`click`, e=> {
+    this.days.addEventListener('click', (e) => {
       const tgt = e.target;
 
-      if(!tgt.hasAttribute(`data-day`)) {
+      if(!tgt.classList.contains('esm-polyfill-day') || tgt.classList.contains('esm-polyfill-invalid-day')) {
         return false;
       }
 
-      const curSel = this.days.querySelector(`[data-selected]`);
+      const curSel = this.days.querySelector('.esm-polyfill-day-selected');
       if(curSel) {
-        curSel.removeAttribute(`data-selected`);
+        curSel.classList.remove('esm-polyfill-day-selected');
       }
-      tgt.setAttribute(`data-selected`, '');
+      tgt.classList.add('esm-polyfill-day-selected');
 
       this.date.setDate(parseInt(tgt.textContent, 10));
       this.setInput();
@@ -146,7 +146,7 @@ class Picker {
   // Match picker date with input date.
   sync() {
     if(this.input.element.valueAsDate) {
-      this.date = Picker.absoluteDate(this.input.element.valueAsDate);
+      this.date = Picker.utcDateToLocal(this.input.element.valueAsDate);
     } else {
       this.date = new Date();
     }
@@ -206,15 +206,16 @@ class Picker {
     // as well as on which weekdays they lie.
     const year = this.date.getFullYear(); // Get the year (2016).
     const month = this.date.getMonth(); // Get the month number (0-11).
-    const startDay = new Date(year, month, 1).getDay(); // First weekday of month (0-6).
-    const maxDays = new Date(
+    let startDate = new Date(year, month, 1);
+    const startDay = startDate.getDay(); // First weekday of month (0-6).
+    const daysInMonth = new Date(
       this.date.getFullYear(),
       month + 1,
       0
     ).getDate(); // Get days in month (1-31).
 
     // The input's current date.
-    const selDate = Picker.absoluteDate(this.input.element.valueAsDate) || false;
+    const selDate = Picker.utcDateToLocal(this.input.element.valueAsDate) || false;
 
     // Are we in the input's currently-selected month and year?
     const selMatrix =
@@ -222,9 +223,22 @@ class Picker {
       && year === selDate.getFullYear()
       && month === selDate.getMonth();
 
+    const minStr = this.input.element.min;
+    const minTime = minStr
+      ? Picker.utcDateToLocal(new Date(minStr)).getTime()
+      : -30610224000000; // 1000-01-01
+    const maxStr = this.input.element.max;
+    const maxTime = maxStr
+      ? Picker.utcDateToLocal(new Date(maxStr)).getTime()
+      : 32503680000000; // 3000-01-01
+
+    const currentDate = new Date();
+    currentDate.setHours(0,0,0,0);
+    const currentTime= currentDate.getTime();
+
     // Populate days matrix.
     const matrixHTML = [];
-    for(let i = 0; i < maxDays + startDay; ++i) {
+    for(let i = 0; i < daysInMonth + startDay; ++i) {
       // Add a row every 7 days.
       if(i % 7 === 0) {
         matrixHTML.push(`
@@ -242,10 +256,21 @@ class Picker {
 
       // Populate day number.
       const dayNum = i + 1 - startDay;
-      const selected = selMatrix && selDate.getDate() === dayNum;
+      const classList = ['esm-polyfill-day'];
+      if (selMatrix && selDate.getDate() === dayNum){
+        classList.push('esm-polyfill-day-selected');
+      }
+      let thisTime = startDate.setDate(dayNum);
+      if (thisTime < minTime || thisTime > maxTime) {
+        console.log({min: new Date(minTime), max: new Date(maxTime), current: new Date(thisTime)})
+        classList.push('esm-polyfill-invalid-day');
+      };
+      if (thisTime === currentTime) {
+        classList.push('esm-polyfill-current-day');
+      }
 
       matrixHTML.push(
-        `<td data-day ${selected ? `data-selected` : ''}>
+        `<td class="${classList.join(' ')}">
           ${dayNum}
         </td>`
       );
@@ -289,14 +314,14 @@ class Picker {
       aOption.value = i;
 
       if(i === selectedValue) {
-        aOption.selected = `selected`;
+        aOption.selected = 'selected';
       }
     }
 
     return theSelect;
   }
 
-  static absoluteDate(date) {
+  static utcDateToLocal(date) {
     return date && new Date(date.getTime() + date.getTimezoneOffset()*60000);
   }
 }

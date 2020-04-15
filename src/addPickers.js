@@ -2,8 +2,8 @@ import Picker from './Picker.js';
 import Input from './Input.js';
 import { FindInputsHelper } from './FindInputsHelper.js';
 
-export function addPickers({ watchForInsert = false, allowForcePicker = false } = {}) {
-    Picker.instance = new Picker();
+export function addPickers({ watchForInsert = false, allowForcePicker = false, yrsBack = 80, yrsFwd = 20 } = {}) {
+    Picker.instance = new Picker({yrsBack, yrsFwd});
     const findHelper = new FindInputsHelper({ allowForcePicker });
         // Get and loop all the input[type="date"]s in the page that do not have `[data-has-picker]` yet.
     findHelper.getAllInputsForPolyfilling().forEach((di) => new Input(di));

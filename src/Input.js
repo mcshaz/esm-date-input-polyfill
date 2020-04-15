@@ -87,6 +87,7 @@ export default class Input {
 
     // Initialize value for display.
     if (!this.element.setCustomValidity) {
+      console.log('HTMLElement.setCustomValidity not supported');
       this.element.setCustomValidity = () => void 0;
     }
     this.element.value = this.element.getAttribute('value');
@@ -152,10 +153,10 @@ export default class Input {
       let minDate = new Date(this.element.min || NaN);
       let maxDate = new Date(this.element.max || NaN);
       if (this.element._datePolyfillVal < minDate.getTime()) {
-        this.element.setCustomValidity('≥' + this.toLocaleDateString(minDate));
+        this.element.setCustomValidity('≥ ' + this.toLocaleDateString(minDate));
         return false;
       } else if (this.element._datePolyfillVal > maxDate.getTime()) {
-        this.element.setCustomValidity('≤' + this.toLocaleDateString(maxDate));
+        this.element.setCustomValidity('≤ ' + this.toLocaleDateString(maxDate));
         return false;
       }
     }

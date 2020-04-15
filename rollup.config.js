@@ -22,7 +22,7 @@ function getRollupBasePlugins({ buildTarget = buildTargets.npm }) {
     commonjs(),
     postcss({
       extract: false,
-      modules: true,
+      modules: false,
       use: ['sass'],
     }),
     // replace({'process.env.NODE_ENV': JSON.stringify('production')}),

@@ -64,16 +64,27 @@ date-input-polyfill {
     padding: 4px;
     text-align: center;
   }
-  td[data-day] {
+  td {
     cursor: pointer;
 
     &:hover {
-      background: #E0E0E0;
+      background: #E0E0FF;
     }
   }
-  [data-selected] {
+
+  .esm-polyfill-invalid-day {
+    background: #eee;
+    color: #422;
+    cursor: not-allowed;
+  }
+  
+  .esm-polyfill-day-selected {
     font-weight: bold;
-    background: #D8EAF6;
+    background: #d8eaf6;
+  }
+
+  .esm-polyfill-current-day {
+    border: 1px #777 solid;
   }
 }
 
