@@ -262,7 +262,6 @@ class Picker {
       }
       let thisTime = startDate.setDate(dayNum);
       if (thisTime < minTime || thisTime > maxTime) {
-        console.log({min: new Date(minTime), max: new Date(maxTime), current: new Date(thisTime)})
         classList.push('esm-polyfill-invalid-day');
       };
       if (thisTime === currentTime) {

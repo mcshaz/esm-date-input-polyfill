@@ -82,23 +82,45 @@ const moduleConfig = [
   // create example using library
   // Module config for <script type="module">
   {
-    input: 'gest-age.module.js',
+    input: 'examples/src/esm.module.js', // 'examples/src/gest-age.module.js',
     output: {
-      dir: 'examples',
+      dir: 'examples/dist',
       format: 'esm',
       dynamicImportFunction: '__import__',
       sourcemap: true,
     },
     plugins: [
       ...getRollupBasePlugins({ buildTarget: buildTargets.browserModule }),
-      del({targets: 'examples/*'}),
+      del({targets: 'examples/dist/*'}),
     ]
   },
   // Legacy config for <script nomodule>
   {
-    input: 'gest-age.nomodule.js',
+    input: 'examples/src/esm.nomodule.js',
     output: {
-      file: 'examples/gest-age.nomodule.js',
+      file: 'examples/dist/esm.nomodule.js',
+      format: 'iife',
+      sourcemap: true,
+    },
+    plugins: getRollupBasePlugins({ buildTarget: buildTargets.browserNoModule }),
+    inlineDynamicImports: true,
+  },
+  // Module config for <script type="module">
+  {
+    input: 'examples/src/gest-age.module.js',
+    output: {
+      dir: 'examples/dist',
+      format: 'esm',
+      dynamicImportFunction: '__import__',
+      sourcemap: true,
+    },
+    plugins: getRollupBasePlugins({ buildTarget: buildTargets.browserModule }),
+  },
+  // Legacy config for <script nomodule>
+  {
+    input: 'examples/src/gest-age.nomodule.js',
+    output: {
+      file: 'examples/dist/gest-age.nomodule.js',
       format: 'iife',
       sourcemap: true,
     },

@@ -24,13 +24,19 @@ Add to your project:
 
 ### Getting Started
 
-Execute the polyfillDateIfRequired function. The options are { watchForInsert: false, allowForcePicker: false }. The function returns a `promise`
+Execute the polyfillDateIfRequired function. The options are { watchForInsert: false, allowForcePicker: false, yrsBack: 80, yrsFwd: 20 }. The function returns a `promise`
 
 watchForInsert
 : `[default: false]` Set up a `MutationObserver` to look for dynamically inserted date-inputs. Should be false if the page does not dynamically insert DOM nodes for performance reasons. If your page heavily uses animations, it is possible this slows your page down. Originally this script had only run on mousedown event (e.g. when entering the input for the first time), which is more performant, but results in no placeholder being added until after the user has clicked the mouse somewhere on the page. The old code is still commented out in addPickers.js if that better suits your needs.
 
 allowForcePicker
-: `[default: false]` Will apply the date-input polyfill _even if_ the browser natively supports date-input elements, **if** the input element or any ancestor of the input elment has a `data-force-esm-date-input-polyfill` attribute. In order to work, forcing the polyfill _when date inputs are natively supported_ will change the `type` attribute of the date-input from `date` to `date-polyfill`.
+: `[default: false]` Will apply the date-input polyfill _even if_ the browser natively supports date-input elements, **if** the input element or any ancestor of the input elment has a `data-force-date-input-polyfill` attribute. In order to work, forcing the polyfill _when date inputs are natively supported_ will change the `type` attribute of the date-input from `date` to `date-polyfill`.
+
+yrsBack
+: `[default: 80]` How many years before the current year the `year select` will display.
+
+yrsFwd
+: `[default: 20]` How many years after the current year the `year select` will display.
 
 Returns
 : A `promise` which is resolved after the DOM content has been loaded and all date-input elements in the document at this point have been polyfilled. If the browser supports date-inputs and `allowForcePicker` is false [default], the promise will resolve immediately.
@@ -100,8 +106,6 @@ Run `npm run build`
 ### Features
 Given the lifecycle of browsers which do not natively support date-inputs, there no plans to add the features below, however if this project were to have a roadmap:
 - placeholder currently uses english characters e.g. `dd/mm/yyyy`. This should clearly be language specific.
-- support min &amp; max properties and attributes by greying out and preventing click on invalid dates. Add `setCustomValidity` if manually typed date is outside valid range.
-- potentially append a sibling input[type=hidden] with the original date-picker name, and append the original date-input id & name with something. this way data going to the server _without ajax_ i.e. simple form submit etc. will be in the `yyyy-mm-dd` form regardless of whether the browser supports date-inputs or not. The same would apply for the original `value` attribute.
 - separate out language files and dynamically retrieve only the 1 language file required.
 
 ## Thanks

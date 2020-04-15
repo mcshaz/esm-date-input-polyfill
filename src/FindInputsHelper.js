@@ -1,6 +1,6 @@
 import { dateInputIsSupported } from './dateInputIsSupported.js';
 const pickerAppliedAttr = 'data-has-picker';
-const forcePickerAttr = 'data-force-esm-date-input-polyfill';
+const forcePickerAttr = 'data-force-date-input-polyfill';
 
 class FindInputsHelper {
   constructor({ allowForcePicker = false} = {}) {
