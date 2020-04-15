@@ -1,8 +1,8 @@
 {
-  "name": "nodep-date-input-polyfill",
+  "name": "esm-date-input-polyfill",
   "version": "6.0.0",
   "description": "Automatically adds datepickers to input[type=date] on IE, Firefox, and macOS Safari.",
-  "main": "nodep-date-input-polyfill.dist.js",
+  "main": "esm-date-input-polyfill.dist.js",
   "scripts": {
     "start": "rollup -c -w & httpster -p 8080",
     "start-c9": "rollup -c -w & httpster -p $PORT",
@@ -15,9 +15,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/brianblakely/nodep-date-input-polyfill.git"
+    "url": "git://github.com/brianblakely/esm-date-input-polyfill.git"
   },
-  "bugs": "https://github.com/brianblakely/nodep-date-input-polyfill/issues",
+  "bugs": "https://github.com/brianblakely/esm-date-input-polyfill/issues",
   "keywords": [
     "html5",
     "light",
@@ -42,10 +42,10 @@
     "node-sass": "^4.13.1",
     "rollup": "^2.4.0",
     "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-delete": "^1.2.0",
     "rollup-plugin-postcss": "^2.5.0",
     "rollup-plugin-terser": "^5.3.0",
     "rollup-watch": "^4.3.1"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

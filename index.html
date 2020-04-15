@@ -1,54 +1,121 @@
 <!DOCTYPE html>
-<html style="height: 100%;">
+<html >
   <head>
     <meta charset="UTF-8">
     <title>nodep Polyfill Test</title>
     <meta name="description" content="nodep Polyfill Test">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
 
-    <script src="dist/iife/nodep-date-input-polyfill.js" ></script>
+    <script src="dist/iife/esm-date-input-polyfill.js" ></script>
   </head>
-  <body style="width: 200%; height: 200%;" >
-    <div data-nodep-date-input-polyfill-debug>
-      <p>
-        <label for="date1">normal:</label>
-        <input type="date" id="date1">
-      </p>
-      <p>
-        value: <output id="date1-value-output" for="date1"></output>
-      </p>
-      <p>
-        valueAsDate: <output id="date1-value-as-date-output" for="date1"></output>
-        <script>
-          nodepDateInputPolyfill.polyfillDateIfRequired({watchForInsert: true, allowForcePicker: true});
-          var theDate = document.getElementById('date1');
-          theDate.addEventListener('input', function(el) {
-            document.getElementById('date1-value-output').innerHTML = el.target.value;
-            document.getElementById('date1-value-as-date-output').innerHTML = String(el.target.valueAsDate);
-          });
+  <body >
+    <form>
+      <div data-force-esm-date-input-polyfill>
+        <fieldset>
+          <legend>Simple</legend>
+          <p>
+            <label>Date:
+              <input type="date" id="simple-date">
+            </label>
+          </p>
+          <p>
+            <label>value:
+              <output class="date-value" for="simple-date"></output>
+            </label>
+          </p>
+          <p>
+            <label>valueAsDate: 
+              <output class="value-as-date" for="simple-date"></output>
+            </label>
+          </p>
+        </fieldset>
+        
+        <fieldset>
+          <legend>With Value and Min/Max Attributes</legend>
+          <p>
+            <label>Date:
+              <input type="date" id="value-attr-date" value="2020-03-03" min="2020-02-15" max="2020-05-18">
+            </label>
+          </p>
+          <p>
+            <label>value:
+              <output class="date-value" for="value-attr-date"></output>
+            </label>
+          </p>
+          <p>
+            <label>valueAsDate: 
+              <output class="value-as-date" for="value-attr-date"></output>
+            </label>
+          </p>
+        </fieldset>
 
-        </script>
-      </p>
+        <fieldset>
+          <legend>Dynamically Created</legend>
+          <p>
+            <label id="dynamic-create-date">Date:
+            </label>
+          </p>
+          <p>
+            <label>value:
+              <output class="date-value" for="dynamic-date"></output>
+            </label>
+          </p>
+          <p>
+            <label>valueAsDate: 
+              <output class="value-as-date" for="dynamic-date"></output>
+            </label>
+          </p>
+        </fieldset>
+      </div>
+      <fieldset>
+        <legend>native date input (if supported):</legend>
+        <p>
+          <input type="date" value="2015-03-28" lang="de-DE" >
+        </p>
+        <p>
+          <label>Date:
+            <input type="date" id="native-date">
+          </label>
+        </p>
+        <p>
+          <label>value:
+            <output class="date-value" for="native-date"></output>
+          </label>
+        </p>
+        <p>
+          <label>valueAsDate: 
+            <output class="value-as-date" for="native-date"></output>
+          </label>
+        </p>
+      </fieldset>
+      <input type="submit">
+    </form>
+    <script>
+      (function() {
+        nodepDateInputPolyfill.polyfillDateIfRequired({watchForInsert: true, allowForcePicker: true});
 
-      <p>
-        with value:
-        <input type="date" value="2015-03-28" lang="de-DE" />
-      </p>
+        var outputs = document.getElementsByTagName('output');
+        outputs.forEach(watchDates);
 
-      <p id="dynamic-date">
-        dynamically created:
-        <script>
-          setTimeout(function() {
-            var input = document.createElement("input");
-            input.setAttribute("type", "date");
-            document.getElementById("dynamic-date").appendChild(input);
-          }, 2000);
-        </script>
-      </p>
-    </div>
-    <p>
-      native date input (if supported):
-      <input type="date" value="2015-03-28" lang="de-DE" />
-    </p>
+        // dynamically create date element
+        setTimeout(function() {
+            var inpt = document.createElement("input");
+            inpt.setAttribute("type", "date");
+            inpt.setAttribute("id", "dynamic-date");
+            document.getElementById("dynamic-create-date").appendChild(inpt);
+            Array.prototype.filter.call(outputs, function(o) { return o.getAttribute('for') === 'dynamic-date' }).forEach(watchDates);
+          }, 500);
+        
+        function watchDates(o) {
+          var outputFor = document.getElementById(o.getAttribute('for'));
+          if (outputFor) {
+            var onInput = o.className === 'date-value'
+              ? function(el) { o.innerHTML = el.target.value; }
+              : function(el) { o.innerHTML = String(el.target.valueAsDate); };
+            outputFor.addEventListener('input', onInput);
+          }
+        }
+      })();
+    </script>
   </body>
 </html>

@@ -2,7 +2,9 @@ import Picker from './Picker.js';
 import { getLanguageInfo } from './languages.js';
 import { pickerAppliedAttr } from './FindInputsHelper.js';
 import { dateInputIsSupported } from './dateInputIsSupported.js'
- 
+
+const validIsoDateRx = /^\d{4}-\d{2}-\d{2}$/;
+
 export default class Input {
   constructor(input) {
     this.element = input;
@@ -30,8 +32,8 @@ export default class Input {
     }
     const valuePropDescriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(this.element), 'value')
     if (valuePropDescriptor === null) {
-      valuePropDescriptor = { get:() => this.element.getAttribute('value'), set() {} };
-      console.log("nodep-date-input-polyfill: unable to obtain native input[type=date] .value propertyDescriptor");
+      valuePropDescriptor = { get:() => this.element.getAttribute('value') || '', set:(value) => this.element.setAttribute('value', value) };
+      console.log("esm-date-input-polyfill: unable to obtain native input[type=date] .value propertyDescriptor");
     }
     Object.defineProperties(
       this.element,
@@ -41,67 +43,58 @@ export default class Input {
           set: valuePropDescriptor.set
         },
         'value': {
-          get: ()=> this.element.polyfillValue,
-          set: val=> {
-            if(!/^\d{4}-\d{2}-\d{2}$/.test(val)) {
-              this.element.polyfillValue = this.element.textValue  = '';
-              this.element.setAttribute('value', '');
-              return;
-            }
-
-            this.element.polyfillValue = val;
-
-            const YMD = val.split(`-`);
-            this.element.textValue = this.localeText.format
-              .replace(`Y`, YMD[0])
-              .replace(`M`, YMD[1])
-              .replace(`D`, YMD[2]);
-            this.element.setAttribute(
-              `value`,
-              this.element.textValue
-            );
-            
-          }
+          get: ()=> this.element._datePolyfillVal
+            ? new Date(this.element._datePolyfillVal).toISOString().slice(0,10)
+            : '',
+          set: val=> this.element.valueAsDate = (val && validIsoDateRx.test(val))
+            ? new Date(val)
+            : null,
         },
         'valueAsDate': {
-          get: ()=> {
-            if(!this.element.polyfillValue) {
-              return null;
-            }
-
-            return new Date(this.element.polyfillValue);
-          },
-          set: val=> {
-            if (val === null || isNaN(val.getTime())) {
-              this.element.value = '';
+          get:() => this.element._datePolyfillVal
+              ? new Date(this.element._datePolyfillVal)
+              : null,
+          set:(val) => {
+            if (val && val.getTime && !Number.isNaN(this.element._datePolyfillVal = val.getTime())) {
+              this.element.textValue = this.toLocaleDateString(val);
             } else {
-              this.element.value = val.toISOString().slice(0,10);
+              this.element.textValue  = '';
+              this.element._datePolyfillVal = void 0;
             }
+            this.validate();
           }
         },
         'valueAsNumber': {
-          get: ()=> {
-            if(!this.element.value) {
-              return NaN;
-            }
-
-            return this.element.valueAsDate.getTime();
-          },
-          set: val=> {
-            this.element.valueAsDate = new Date(val);
-          }
+          get: ()=> this.element._datePolyfillVal === void 0
+            ? NaN
+            : this.element._datePolyfillVal,
+          set: val=> this.element.valueAsDate = new Date(val),
+        },
+        'min': {
+          get: ()=> this.element.getAttribute('min'),
+          set: val=> validIsoDateRx.test(val)
+            ? this.element.setAttribute('min', val)
+            : this.element.removeAttribute('min'),
+        },
+        'max': {
+          get: ()=> this.element.getAttribute('max'),
+          set: val=> validIsoDateRx.test(val)
+            ? this.element.setAttribute('max', val)
+            : this.element.removeAttribute('max'),
         }
       }
     );
 
     // Initialize value for display.
+    if (!this.element.setCustomValidity) {
+      this.element.setCustomValidity = () => void 0;
+    }
     this.element.value = this.element.getAttribute('value');
+
 
     // Open the picker when the input get focus,
     // also on various click events to capture it in all corner cases.
-    const showPicker = ()=> {
-      Picker.instance.attachTo(this);
-    };
+    const showPicker = ()=> Picker.instance.attachTo(this);
     const passiveOpt = { passive: true };
     this.element.addEventListener('focus', showPicker, passiveOpt);
     this.element.addEventListener('mousedown', showPicker, passiveOpt);
@@ -154,6 +147,22 @@ export default class Input {
     }, passiveOpt);
   }
 
+  validate() {
+    if (this.element._datePolyfillVal) {
+      let minDate = new Date(this.element.min || NaN);
+      let maxDate = new Date(this.element.max || NaN);
+      if (this.element._datePolyfillVal < minDate.getTime()) {
+        this.element.setCustomValidity('≥' + this.toLocaleDateString(minDate));
+        return false;
+      } else if (this.element._datePolyfillVal > maxDate.getTime()) {
+        this.element.setCustomValidity('≤' + this.toLocaleDateString(maxDate));
+        return false;
+      }
+    }
+    this.element.setCustomValidity('');
+    return true;
+  }
+
   setLocaleText(elementLang) {
     let preferredLocales = window.navigator.languages
       ? [...window.navigator.languages]
@@ -170,11 +179,11 @@ export default class Input {
     this.localeText = li;
   }
 
-  static pendingDateInputs() {
-    '[data-nodep-date-input-polyfill-debug]'
+  toLocaleDateString(dt) {
+    const ymd = dt.toISOString().slice(0,10).split(`-`);
+    return this.localeText.format
+      .replace(`Y`, ymd[0])
+      .replace(`M`, ymd[1])
+      .replace(`D`, ymd[2]);
   }
-}
-
-function preventDefault(evt) {
-  evt.preventDefault();
 }

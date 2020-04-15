@@ -3,7 +3,7 @@ import { polyfillDateIfRequired } from './dist/polyfill-date-if-required-dynamic
 
 if (window.__gest_age_script_loaded) {
     // https://gist.github.com/samthor/64b114e4a4f539915a95b91ffd340acc
-    throw new error("nodep-date-input-polyfill has been executed twice - usually a Safari bug");
+    throw new error("esm-date-input-polyfill has been executed twice - usually a Safari bug");
 }
 window.__gest_age_script_loaded = true;
 

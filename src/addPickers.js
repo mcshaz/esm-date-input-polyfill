@@ -27,13 +27,19 @@ export function addPickers({ watchForInsert = false, allowForcePicker = false } 
                 }
             })
         );
-        // call `observe` on that MutationObserver instance, 
-        // passing it the element to observe, and the options object
-        observer.observe(document.body, {
+        const observe = () => observer.observe(document.body, {
             childList: true,
             attributes: false,
             subtree: true,
         });
+        Picker.instance.onBeforeOpen(() => {
+            observer.disconnect();
+            setTimeout(observe, 100);
+        });
+        observe();
+        // call `observe` on that MutationObserver instance, 
+        // passing it the element to observe, and the options object
+
 
         // this might not be the best way to handle this as it will not add placeholder until clicked
         /*

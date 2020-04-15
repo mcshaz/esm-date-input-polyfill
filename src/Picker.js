@@ -1,4 +1,4 @@
-import './nodep-date-input-polyfill.scss';
+import './esm-date-input-polyfill.scss';
 
 class Picker {
   constructor() {
@@ -12,6 +12,7 @@ class Picker {
     this.date = new Date();
     this.input = null;
     this.isOpen = false;
+    this._onBeforeOpen = [];
 
     // The picker element. Unique tag name attempts to protect against
     // generic selectors.
@@ -71,7 +72,7 @@ class Picker {
       }
       tgt.setAttribute(`data-selected`, '');
 
-      this.date.setDate(parseInt(tgt.textContent));
+      this.date.setDate(parseInt(tgt.textContent, 10));
       this.setInput();
     }, passiveOpt);
 
@@ -105,7 +106,12 @@ class Picker {
 
   // Show.
   show() {
+    this._onBeforeOpen.forEach((fn) => fn());
     this.container.setAttribute('data-open', this.isOpen = true);
+  }
+
+  onBeforeOpen(fn) {
+    this._onBeforeOpen.push(fn);
   }
 
   // Position picker below element. Align to element's left edge.

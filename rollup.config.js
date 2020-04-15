@@ -7,6 +7,7 @@ import postcss from 'rollup-plugin-postcss';
 import 'core-js';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
+import del from 'rollup-plugin-delete';
 // import path from 'path';
 
 const buildTargets = {
@@ -27,7 +28,7 @@ function getRollupBasePlugins({ buildTarget = buildTargets.npm }) {
     // replace({'process.env.NODE_ENV': JSON.stringify('production')}),
     terser({
       sourcemap: true,
-      output: { preamble: '// @license MIT - https://github.com/brianblakely/nodep-date-input-polyfill' },
+      output: { preamble: '// @license MIT - https://github.com/brianblakely/esm-date-input-polyfill' },
     }),
   ];
   if (buildTarget === buildTargets.browserModule || buildTarget === buildTargets.browserNoModule) {
@@ -59,7 +60,10 @@ const moduleConfig = [
       chunkFileNames: '[name]-[hash].mjs',
       sourcemap: true,
     },
-    plugins: getRollupBasePlugins({ buildTarget: buildTargets.npm }),
+    plugins: [
+      ...getRollupBasePlugins({ buildTarget: buildTargets.npm }),
+      del({ targets: 'dist/*' })
+    ],
   },
   // Legacy config for anyone who wants to insert the <script> and have defined
   // window.nodepDateInputPolyfill
@@ -67,7 +71,7 @@ const moduleConfig = [
   {
     input: 'src/polyfill-date-if-required-dynamic-import.js',
     output: {
-      file: 'dist/iife/nodep-date-input-polyfill.js',
+      file: 'dist/iife/esm-date-input-polyfill.js',
       format: 'iife',
       name: 'nodepDateInputPolyfill',
       sourcemap: true,
@@ -85,7 +89,10 @@ const moduleConfig = [
       dynamicImportFunction: '__import__',
       sourcemap: true,
     },
-    plugins: getRollupBasePlugins({ buildTarget: buildTargets.browserModule }),
+    plugins: [
+      ...getRollupBasePlugins({ buildTarget: buildTargets.browserModule }),
+      del({targets: 'examples/*'}),
+    ]
   },
   // Legacy config for <script nomodule>
   {
