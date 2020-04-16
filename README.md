@@ -24,9 +24,10 @@ Add to your project:
 
 ### Configuration
 
-Options may be provided to the polyfillIfRequired function:
 #### function return value
 Returns a `promise` which is resolved after the DOM content has been loaded and all date-input elements in the document at this point have been polyfilled. If the browser supports date-inputs and `allowForcePicker` (see below) is false, the promise will resolve immediately.
+
+Options may be provided to the polyfillIfRequired function:
 
 #### watchForInsert
 Type: `boolean` | Default: `false`
@@ -50,7 +51,10 @@ Type: `number` | Default: `20`
 
 How many years after (forward of) the current year the `year select` will display.
 
- * **Webpack / Rollup / Babel / ES:** Using the module/nomodule approach. Have a look at the example in this repository:
+## Using in your project
+
+### Webpack / Rollup / Babel / ES:
+Using the module/nomodule approach. Have a look at the example in this repository:
  - Create an entry (input) [.js or .mjs or .ts] [file for browsers which support ECMAScript modules](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/examples/esm.module.js), which includes a polyfill for dynamic import in browsers which support modules but not dynamic import statements. 
  - Have a [seperate entry file for legacy browsers](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/examples/esm.nomodule.js).
  - Modern browsers will only download a tiny file to check for date-input support, and download the appropriate polyfill only if date inputs are not natively supported.
@@ -67,7 +71,7 @@ export function myScript() {
     polyfillIfRequired({watchForInsert: true}).then(function() {
 ```
 
-* **Script Tag:**
+### Script Tag:
 Execute `dateInputPolyfill.polyfillIfRequired()` and if required with an option object with the properties described above. See the example of this workflow [here](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/docs/iife.html).
 
 
