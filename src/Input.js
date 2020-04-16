@@ -3,7 +3,7 @@ import { getLanguageInfo } from './languages.js';
 import { pickerAppliedAttr } from './find-inputs-helper.js';
 import { dateInputIsSupported } from './date-input-is-supported.js';
 import { LookupResult } from './lookup-result.js';
-import {closestWithProp} from './closest-with-prop.js';
+import {closestWithTruthyProp} from './closest-with-truthy-prop.js';
 
 const validIsoDateRx = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -18,7 +18,7 @@ export default class Input {
             // this.element.addEventListener('click', preventDefault);
         }
 
-        this.setLocaleText(closestWithProp(this.element, 'lang'));
+        this.setLocaleText(closestWithTruthyProp(this.element, 'lang'));
         if (!this.element.placeholder) {
             this.element.placeholder = this.localeText.format.replace('M', 'mm').replace('D', 'dd').replace('Y', 'yyyy');
         }

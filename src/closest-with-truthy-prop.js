@@ -1,7 +1,7 @@
 // IE11 does not support HTMLElement.closest property. Using this instead.
-export function closestWithProp(el, propName) {
+export function closestWithTruthyProp(el, propName) {
     do {
-        if (propName in el) {
+        if (el[propName]) {
             return el[propName];
         }
         el = el.parentElement || el.parentNode;
