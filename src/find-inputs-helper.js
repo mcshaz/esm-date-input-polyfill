@@ -3,13 +3,13 @@ const pickerAppliedAttr = 'data-has-picker';
 const forcePickerAttr = 'data-force-date-input-polyfill';
 
 class FindInputsHelper {
-    constructor({ allowForcePicker = false} = {}) {
-        this.allowForcePicker = allowForcePicker;
+    constructor({ forcePolyfill = false} = {}) {
+        this.forcePolyfill = forcePolyfill;
     }
 
     requiresPolyfilling(el) {
         return el && el.tagName === 'INPUT' && el.getAttribute('type') === 'date' && !el.hasAttribute(pickerAppliedAttr)
-          && (!dateInputIsSupported || (this.allowForcePicker && el.closest(`[${forcePickerAttr}]`) !== null));
+          && (!dateInputIsSupported || (this.forcePolyfill && el.closest(`[${forcePickerAttr}]`) !== null));
     }
 
     getAllInputsForPolyfilling() {

@@ -14,20 +14,45 @@ Forked from [nodep-date-input-polyfill](https://github.com/brianblakely/esm-date
 
 ### NPM
 
-`npm install --save esm-date-input-polyfill`
+```bash
+# npm
+npm install --save esm-date-input-polyfill
+
+#yarn
+yarn add esm-date-input-polyfill
+```
 
 Add to your project:
 
-* **Webpack / Rollup / Babel / ES:** `import { polyfillIfRequired } from 'esm-date-input-polyfill';` 
+* **Webpack / Rollup / Babel / ES:** 
+```js
+import { polyfillIfRequired } from 'esm-date-input-polyfill';
+polyfillIfRequired({
+    watchForInsert: true,
+}).then((_polyfillWasInserted) =>
+    // we can now access the polyfilled properties such as value (which will now be yyyy-mm-dd format) 
+    document.querySelector('input[type=date]').valueAsDate = new Date())
+);
+```
 
-* **Script Tag:** Copy `esm-date-input-polyfill.js` from `node_modules/esm-date-input-polyfill/dist/iife` and include it anywhere in your HTML. This will use an Immediately invoked function expression (IIFE) which creates the object `dateInputPolyfill` as a global property (i.e. on the `window object`). `dateInputPolyfill.polyfillIfRequired()` will initiate the polyfill.
+* **Script Tag:** Copy `esm-date-input-polyfill.js` from `node_modules/esm-date-input-polyfill/dist/iife` and include it anywhere in your HTML. This will use an Immediately invoked function expression (IIFE) which creates the object `dateInputPolyfill` as a global property (i.e. on the `window object`).
+```js
+dateInputPolyfill.polyfillIfRequired()
+```
+or with options such as:
+```js
+dateInputPolyfill.polyfillIfRequired({forcePolyfill: true})
+```
+Will initiate the polyfill.
 
-### Configuration
+## Configuration
 
-#### function return value
-Returns a `promise` which is resolved after the DOM content has been loaded and all date-input elements in the document at this point have been polyfilled. If the browser supports date-inputs and `allowForcePicker` (see below) is false, the promise will resolve immediately.
+#### function returns
+Returns a `promise` which is resolved:
+- If the browser supports date inputs, the promise will resolve immediately (the `then` callback `success function` argument will have a value of `false`).
+- If the browser _does not_ natively support date inputs _or_ the `forcePolyfill` option [see below] is `true`, the promise will return after the DOM content has been loaded and all date-input elements in the document (at that point in time) have been polyfilled.The `then` callback `success function` argument will have a value of `true`.
 
-Options may be provided to the polyfillIfRequired function:
+### Options may be provided to the polyfillIfRequired function:
 
 #### watchForInsert
 Type: `boolean` | Default: `false`
@@ -36,7 +61,7 @@ Set up a `MutationObserver` to look for dynamically inserted date-inputs. For pe
 
 Originally this script had only run on mousedown event (e.g. when entering the input for the first time), which is more performant, but results in no placeholder being added until after the user has clicked the mouse somewhere on the page. The old code is still commented out in addPickers.js if that better suits your needs.
 
-#### allowForcePicker
+#### forcePolyfill
 Type: `boolean` | Default: `false`
 
 Will apply the date-input polyfill _even if_ the browser natively supports date-input elements, **if** the input element or any ancestor of the input elment has a `data-force-date-input-polyfill` attribute. Forcing the polyfill _in a browser which natively supports date inputs_ will result in the `type` attribute of the date-input being chaged from `date` to `date-polyfill`.

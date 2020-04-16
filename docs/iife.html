@@ -92,7 +92,7 @@
     </form>
     <script>
       (function() {
-        dateInputPolyfill.polyfillIfRequired({watchForInsert: true, allowForcePicker: true});
+        dateInputPolyfill.polyfillIfRequired({watchForInsert: true, forcePolyfill: true});
 
         var outputs = document.getElementsByTagName('output');
         outputs.forEach(watchDates);

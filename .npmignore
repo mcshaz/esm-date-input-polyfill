@@ -5,3 +5,5 @@ examples
 docs
 index.html
 rollup.config.js
+.eslintignore
+.eslintrc.js
