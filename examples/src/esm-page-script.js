@@ -2,7 +2,7 @@ import { polyfillDateIfRequired } from './../../dist/polyfill-date-if-required.m
 
 if (window.__esm_page_script_loaded) {
     // https://gist.github.com/samthor/64b114e4a4f539915a95b91ffd340acc
-    throw new error("esm-date-input-polyfill has been executed twice - usually a Safari bug");
+    throw new Error('esm-date-input-polyfill has been executed twice - usually a Safari bug');
 }
 window.__esm_page_script_loaded = true;
 

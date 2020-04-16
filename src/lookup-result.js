@@ -6,7 +6,7 @@ export class LookupResult {
 
     add(el) {
         const res = this._keySelector(el); // should potentially wrap in String()
-        if (this._dict.hasOwnProperty(res)) {
+        if (Object.prototype.hasOwnProperty.call(this._dict, res)) {
             this._dict[res].push(el);
         } else {
             this._dict[res] = [el];

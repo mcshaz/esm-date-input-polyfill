@@ -8,6 +8,7 @@ import 'core-js';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import del from 'rollup-plugin-delete';
+// import { eslint } from "rollup-plugin-eslint";
 // import path from 'path';
 
 const buildTargets = {

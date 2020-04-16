@@ -3,7 +3,7 @@ import { polyfillDateIfRequired } from './../../dist/polyfill-date-if-required.m
 
 if (window.__gest_age_script_loaded) {
     // https://gist.github.com/samthor/64b114e4a4f539915a95b91ffd340acc
-    throw new error("esm-date-input-polyfill has been executed twice - usually a Safari bug");
+    throw new Error('esm-date-input-polyfill has been executed twice - usually a Safari bug');
 }
 window.__gest_age_script_loaded = true;
 
@@ -61,7 +61,7 @@ export function gestAgePageScript() {
         if (evt.target === targetDateEl) {
             if (targetDate) {
                 lmpDateEl.min = asYMD(targetDate.getTime() - overDatesMs);
-                lmpDateEl.max = asYMD(targetDate)
+                lmpDateEl.max = asYMD(targetDate);
                 scanEddEl.min = asYMD(targetDate.getTime() - maxOverTermMs);
                 scanEddEl.max = asYMD(targetDate.getTime() + overDatesMs);
             } else {
@@ -78,12 +78,12 @@ export function gestAgePageScript() {
             if (lmpDate) {
                 lwd = cgaByLMP(lmpDate, targetDate);
                 lmpWeeksOut.innerHTML = lwd.weeks;
-                lmpDaysOut.innerHTML = lwd.days
+                lmpDaysOut.innerHTML = lwd.days;
             }
             if (scanEdd) {
                 ewd = cgaByEDD(scanEdd, targetDate);
                 eddWeeksOut.innerHTML = ewd.weeks;
-                eddDaysOut.innerHTML = ewd.days
+                eddDaysOut.innerHTML = ewd.days;
             }
         }
         containerVis(lmpWeeksOut, lwd);
@@ -108,8 +108,8 @@ export function gestAgePageScript() {
             days = 'N/A';
         }
         if (weeks < 0) { 
-            weeks = '< 0'
-            days = 'N/A'
+            weeks = '< 0';
+            days = 'N/A';
         }
         return { weeks: weeks, days: days }; // ie11 compatability!
     }
