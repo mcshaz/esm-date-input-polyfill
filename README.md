@@ -30,20 +30,25 @@ Returns a `promise` which is resolved after the DOM content has been loaded and 
 
 #### watchForInsert
 Type: `boolean` | Default: `false`
+
 Set up a `MutationObserver` to look for dynamically inserted date-inputs. For performance reasons, this option should be false if the page does not dynamically insert DOM nodes. If your page heavily uses animations, it is possible this slows your page down.
 
 Originally this script had only run on mousedown event (e.g. when entering the input for the first time), which is more performant, but results in no placeholder being added until after the user has clicked the mouse somewhere on the page. The old code is still commented out in addPickers.js if that better suits your needs.
 
 #### allowForcePicker
 Type: `boolean` | Default: `false`
+
 Will apply the date-input polyfill _even if_ the browser natively supports date-input elements, **if** the input element or any ancestor of the input elment has a `data-force-date-input-polyfill` attribute. Forcing the polyfill _in a browser which natively supports date inputs_ will result in the `type` attribute of the date-input being chaged from `date` to `date-polyfill`.
 
 #### yrsBack
 Type: `number` | Default: `80`
+
 How many years before (prior to) the current year the `year select` will display.
 
 #### yrsFwd
- How many years after (forward of) the current year the `year select` will display.
+Type: `number` | Default: `20`
+
+How many years after (forward of) the current year the `year select` will display.
 
  * **Webpack / Rollup / Babel / ES:** Using the module/nomodule approach. Have a look at the example in this repository:
  - Create an entry (input) [.js or .mjs or .ts] [file for browsers which support ECMAScript modules](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/examples/esm.module.js), which includes a polyfill for dynamic import in browsers which support modules but not dynamic import statements. 
