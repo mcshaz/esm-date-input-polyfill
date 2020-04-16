@@ -8,6 +8,7 @@ import 'core-js';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import del from 'rollup-plugin-delete';
+import copy from 'rollup-plugin-copy'
 // import { eslint } from "rollup-plugin-eslint";
 // import path from 'path';
 
@@ -63,7 +64,7 @@ const moduleConfig = [
     },
     plugins: [
       ...getRollupBasePlugins({ buildTarget: buildTargets.npm }),
-      del({ targets: 'dist/*' })
+      del({ targets: ['dist/*', 'docs/dist/*'] })
     ],
   },
   // create library - note ES modules = Node >= 13.2.0
@@ -89,40 +90,22 @@ const moduleConfig = [
       name: 'dateInputPolyfill',
       sourcemap: true,
     },
-    plugins: getRollupBasePlugins({ buildTarget: buildTargets.browserNoModule }),
+    plugins: [
+      ...getRollupBasePlugins({ buildTarget: buildTargets.browserNoModule }),
+      copy({
+        targets: [
+          { src: ['dist/iife/esm-date-input-polyfill.js', 'dist/iife/esm-date-input-polyfill.js.map'], dest: 'docs/dist' },
+        ],
+        hook: 'writeBundle'})
+    ],
     inlineDynamicImports: true,
   },
   // create example using library
   // Module config for <script type="module">
   {
-    input: 'examples/src/esm.module.js', // 'examples/src/gest-age.module.js',
+    input: 'examples/esm.module.js', // 'examples/src/gest-age.module.js',
     output: {
-      dir: 'examples/dist',
-      format: 'esm',
-      dynamicImportFunction: '__import__',
-      sourcemap: true,
-    },
-    plugins: [
-      ...getRollupBasePlugins({ buildTarget: buildTargets.browserModule }),
-      del({targets: 'examples/dist/*'}),
-    ]
-  },
-  // Legacy config for <script nomodule>
-  {
-    input: 'examples/src/esm.nomodule.js',
-    output: {
-      file: 'examples/dist/esm.nomodule.js',
-      format: 'iife',
-      sourcemap: true,
-    },
-    plugins: getRollupBasePlugins({ buildTarget: buildTargets.browserNoModule }),
-    inlineDynamicImports: true,
-  },
-  // Module config for <script type="module">
-  {
-    input: 'examples/src/gest-age.module.js',
-    output: {
-      dir: 'examples/dist',
+      dir: 'docs/dist',
       format: 'esm',
       dynamicImportFunction: '__import__',
       sourcemap: true,
@@ -131,15 +114,39 @@ const moduleConfig = [
   },
   // Legacy config for <script nomodule>
   {
-    input: 'examples/src/gest-age.nomodule.js',
+    input: 'examples/esm.nomodule.js',
     output: {
-      file: 'examples/dist/gest-age.nomodule.js',
+      file: 'docs/dist/esm.nomodule.js',
       format: 'iife',
       sourcemap: true,
     },
     plugins: getRollupBasePlugins({ buildTarget: buildTargets.browserNoModule }),
     inlineDynamicImports: true,
   },
+  /*
+  // Module config for <script type="module">
+  {
+    input: 'examples/gest-age.module.js',
+    output: {
+      dir: 'docs/dist',
+      format: 'esm',
+      dynamicImportFunction: '__import__',
+      sourcemap: true,
+    },
+    plugins: getRollupBasePlugins({ buildTarget: buildTargets.browserModule }),
+  },
+  // Legacy config for <script nomodule>
+  {
+    input: 'examples/gest-age.nomodule.js',
+    output: {
+      file: 'docs/dist/gest-age.nomodule.js',
+      format: 'iife',
+      sourcemap: true,
+    },
+    plugins: getRollupBasePlugins({ buildTarget: buildTargets.browserNoModule }),
+    inlineDynamicImports: true,
+  },
+  */
 ];
 
 export default moduleConfig;

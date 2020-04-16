@@ -1,4 +1,4 @@
-import { polyfillIfRequired } from './../../dist/polyfill-if-required.mjs';
+import { polyfillIfRequired } from './../dist/polyfill-if-required.mjs';
 
 if (window.__esm_page_script_loaded) {
     // https://gist.github.com/samthor/64b114e4a4f539915a95b91ffd340acc
