@@ -4,11 +4,11 @@ Just include this simple script and IE, macOS Safari, and legacy browser version
 
 Support dynamically created inputs, so can be used in single page applications.
 
-Forked from [nodep-date-input-polyfill](https://github.com/brianblakely/esm-date-input-polyfill) which was in turn forked from [html5-simple-date-input-polyfill](https://www.npmjs.com/package/html5-simple-date-input-polyfill). Continuing as a separate project.
+Forked from [nodep-date-input-polyfill](https://github.com/brianblakely/esm-date-input-polyfill) which was in turn forked from [html5-simple-date-input-polyfill](https://github.com/liorwohl/html5-simple-date-input-polyfill). Continuing as a separate project.
 
 ## Demo
 
-[Try it in IE, macOS Safari, and legacy browser versions.](https://brianblakely.github.io/esm-date-input-polyfill/)
+[Try it in IE, macOS Safari, and legacy browser versions.](https://mcshaz.github.io/esm-date-input-polyfill/)
 
 ## Install
 
@@ -20,45 +20,53 @@ Add to your project:
 
 * **Webpack / Rollup / Babel / ES:** `import 'esm-date-input-polyfill';` note this script uses ECMAScript Modules [ESM - the name of the repo] rather than common JS to export modules. This means your development machine will need Node 10.2 or greater installed.
 
-* **Script Tag:** Copy `esm-date-input-polyfill.js` from `node_modules` and include it anywhere in your HTML. This will use an Immediately invoked function expression (IIFE) which creates the object `window.nodepDateInputPolyfill`
+* **Script Tag:** Copy `esm-date-input-polyfill.js` from `node_modules` and include it anywhere in your HTML. This will use an Immediately invoked function expression (IIFE) which creates the object `dateInputPolyfill` as a global property (i.e. on the `window object`). `dateInputPolyfill.polyfillIfRequired()` will initiate the polyfill.
 
 ### Getting Started
 
-Execute the polyfillDateIfRequired function. The options are { watchForInsert: false, allowForcePicker: false, yrsBack: 80, yrsFwd: 20 }. The function returns a `promise`
+Execute the polyfillIfRequired function. The options argument is `{ watchForInsert: false, allowForcePicker: false, yrsBack: 80, yrsFwd: 20 }`. The function returns a `promise`
 
-watchForInsert
-: `[default: false]` Set up a `MutationObserver` to look for dynamically inserted date-inputs. Should be false if the page does not dynamically insert DOM nodes for performance reasons. If your page heavily uses animations, it is possible this slows your page down. Originally this script had only run on mousedown event (e.g. when entering the input for the first time), which is more performant, but results in no placeholder being added until after the user has clicked the mouse somewhere on the page. The old code is still commented out in addPickers.js if that better suits your needs.
-
-allowForcePicker
-: `[default: false]` Will apply the date-input polyfill _even if_ the browser natively supports date-input elements, **if** the input element or any ancestor of the input elment has a `data-force-date-input-polyfill` attribute. In order to work, forcing the polyfill _when date inputs are natively supported_ will change the `type` attribute of the date-input from `date` to `date-polyfill`.
-
-yrsBack
-: `[default: 80]` How many years before the current year the `year select` will display.
-
-yrsFwd
-: `[default: 20]` How many years after the current year the `year select` will display.
-
-Returns
-: A `promise` which is resolved after the DOM content has been loaded and all date-input elements in the document at this point have been polyfilled. If the browser supports date-inputs and `allowForcePicker` is false [default], the promise will resolve immediately.
+<dl>
+    <dt>watchForInsert</dt>
+    <dd>
+        `[default: false]`: Set up a `MutationObserver` to look for dynamically inserted date-inputs. Should be false if the page does not dynamically insert DOM nodes for performance reasons. If your page heavily uses animations, it is possible this slows your page down. Originally this script had only run on mousedown event (e.g. when entering the input for the first time), which is more performant, but results in no placeholder being added until after the user has clicked the mouse somewhere on the page. The old code is still commented out in addPickers.js if that better suits your needs.
+    </dd>
+    <dt>allowForcePicker</dt>
+    <dd>
+        `[default: false]`: Will apply the date-input polyfill _even if_ the browser natively supports date-input elements, **if** the input element or any ancestor of the input elment has a `data-force-date-input-polyfill` attribute. In order to work, forcing the polyfill _when date inputs are natively supported_ will change the `type` attribute of the date-input from `date` to `date-polyfill`.
+    </dd>
+    <dt>yrsBack</dt>
+    <dd>
+        `[default: 80]`: How many years before the current year the `year select` will display.
+    </dd>
+    <dt>yrsFwd</dt>
+    <dd>
+        `[default: 20]`: How many years after the current year the `year select` will display.
+    </dd>
+    <dt>Returns</dt>
+    <dd>
+        A `promise` which is resolved after the DOM content has been loaded and all date-input elements in the document at this point have been polyfilled. If the browser supports date-inputs and `allowForcePicker` is false [default], the promise will resolve immediately.
+    </dd>
+</dl>
 
  * **Webpack / Rollup / Babel / ES:** Using the module/nomodule approach. Have a look at the example in this repository:
  - Create an entry (input) [.js or .mjs or .ts] [file for browsers which support ECMAScript modules](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/gest-age.module.js), which includes a polyfill for dynamic import in browsers which support modules but not dynamic import statements. 
  - Have a [seperate entry file for legacy browsers](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/gest-age.nomodule.js).
  - Modern browsers will only download a tiny file to check for date-input support, and download the appropriate polyfill only if date inputs are not natively supported.
- - Older browsers will download the full executable. see https://github.com/mcshaz/esm-date-input-polyfill/tree/master/examples and the rollup config at https://github.com/mcshaz/esm-date-input-polyfill/blob/master/rollup.config.js. 
+ - Older browsers will download the full executable. see the example directory and the rollup config within this repository. 
  - Check if the script has already been run in the common file the 2 enty files point to (a problem with Safari 10 respecting `<script type="module" src="...">` but _not_ respecting `<script nomodule src="...">`).
 ```javascript
-import { polyfillDateIfRequired } from './dist/polyfill-date-if-required.mjs';
+import { polyfillIfRequired } from './dist/polyfill-if-required.mjs';
 if (window.__my_script_loaded) { // https://gist.github.com/samthor/64b114e4a4f539915a95b91ffd340acc
     throw new error("[my-script] has been executed twice - usually a Safari bug");
 }
 window.__my_script_loaded = true;
 export function myScript() {
-    polyfillDateIfRequired({watchForInsert: true}).then(function() {
+    polyfillIfRequired({watchForInsert: true}).then(function() {
 ```
 
 * **Script Tag:**
-Execute `nodepDateInputPolyfill.polyfillDateIfRequired()` with any options described above. See the example of this workflow here.
+Execute `dateInputPolyfill.polyfillIfRequired()` with any options described above. See the example of this workflow here.
 
 
 ## Features

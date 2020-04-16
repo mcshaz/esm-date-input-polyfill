@@ -1,4 +1,4 @@
-import { polyfillDateIfRequired } from './../../dist/polyfill-date-if-required.mjs';
+import { polyfillIfRequired } from './../../dist/polyfill-if-required.mjs';
 
 if (window.__esm_page_script_loaded) {
     // https://gist.github.com/samthor/64b114e4a4f539915a95b91ffd340acc
@@ -9,7 +9,7 @@ window.__esm_page_script_loaded = true;
 export function esmPageScript() {
     // note we need to wait as if we don't and the date input is polyfilled,
     // the initial valueAsDate reference will not have been polyfilled (and therefore undefined)
-    polyfillDateIfRequired().then(() => {
+    polyfillIfRequired().then(() => {
         Array.from(document.getElementsByTagName('output')).forEach((o) => {
             const outputFor = document.getElementById(o.getAttribute('for'));
             if (outputFor) {

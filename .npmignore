@@ -1,0 +1,4 @@
+## ignore the dependency modules directory
+node_modules
+src
+examples

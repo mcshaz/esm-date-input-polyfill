@@ -3,7 +3,7 @@ import { forcePickerAttr } from './find-inputs-helper.js';
 
 // Run the above code on any <input type="date"> in the document, also on dynamically created ones.
 // Check if type="date" is supported.
-export function polyfillDateIfRequired({ watchForInsert = false, allowForcePicker = false, yrsBack = 80, yrsFwd = 20 } = {}) {
+export function polyfillIfRequired({ watchForInsert = false, allowForcePicker = false, yrsBack = 80, yrsFwd = 20 } = {}) {
     if (dateInputIsSupported && !(allowForcePicker && document.querySelector(`[${forcePickerAttr}]`))) {
         return Promise.resolve();
     } else {

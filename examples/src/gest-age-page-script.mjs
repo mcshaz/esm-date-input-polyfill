@@ -1,5 +1,5 @@
 
-import { polyfillDateIfRequired } from './../../dist/polyfill-date-if-required.mjs';
+import { polyfillIfRequired } from './../../dist/polyfill-if-required.mjs';
 
 if (window.__gest_age_script_loaded) {
     // https://gist.github.com/samthor/64b114e4a4f539915a95b91ffd340acc
@@ -13,7 +13,7 @@ export function gestAgePageScript() {
     const scanEddEl = document.getElementById('scanEdd');
     const msPerDay = 86400000;
     const termGestMs = 24192000000; // 40 weeks in ms
-    polyfillDateIfRequired().then(function() {
+    polyfillIfRequired().then(function() {
         if (targetDateEl.valueAsDate === null) {
             setTargetNow(); 
         }

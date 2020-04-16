@@ -53,7 +53,7 @@ function getRollupBasePlugins({ buildTarget = buildTargets.npm }) {
 const moduleConfig = [
   // create library - note ES modules = Node >= 13.2.0
   {
-    input: 'src/polyfill-date-if-required.js',
+    input: 'src/polyfill-if-required.js',
     output: {
       dir: 'dist',
       format: 'esm',
@@ -66,15 +66,27 @@ const moduleConfig = [
       del({ targets: 'dist/*' })
     ],
   },
+  // create library - note ES modules = Node >= 13.2.0
+  {
+    input: 'src/polyfill-if-required.js',
+    output: {
+      dir: 'dist/cjs',
+      format: 'cjs',
+      entryFileNames: '[name].cjs.js',
+      chunkFileNames: '[name]-[hash].cjs.mjs',
+      sourcemap: false,
+    },
+    plugins: getRollupBasePlugins({ buildTarget: buildTargets.npm }),
+  },
   // Legacy config for anyone who wants to insert the <script> and have defined
   // window.nodepDateInputPolyfill
-  // to polyfill run window.nodepDateInputPolyfill.polyfillDateIfRequired()
+  // to polyfill run window.nodepDateInputPolyfill.polyfillIfRequired()
   {
-    input: 'src/polyfill-date-if-required.js',
+    input: 'src/polyfill-if-required.js',
     output: {
       file: 'dist/iife/esm-date-input-polyfill.js',
       format: 'iife',
-      name: 'nodepDateInputPolyfill',
+      name: 'dateInputPolyfill',
       sourcemap: true,
     },
     plugins: getRollupBasePlugins({ buildTarget: buildTargets.browserNoModule }),
