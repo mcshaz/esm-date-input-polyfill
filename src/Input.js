@@ -22,6 +22,9 @@ export default class Input {
         if (!this.element.placeholder) {
             this.element.placeholder = this.localeText.format.replace('M', 'mm').replace('D', 'dd').replace('Y', 'yyyy');
         }
+        if (!this.element.title) {
+            this.element.title = this.element.placeholder;
+        }
         this.element.pattern = this.localeText.parser.pattern;
         let valuePropDescriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(this.element), 'value');
         if (valuePropDescriptor === null) {

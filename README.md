@@ -70,7 +70,7 @@ Execute `dateInputPolyfill.polyfillIfRequired()` with any options described abov
 
 
 ## Features
-* **Easily Stylable:** [These are the default styles](https://github.com/brianblakely/esm-date-input-polyfill/blob/master/esm-date-input-polyfill.scss), which you may override with your own.
+* **Easily Stylable:** [These are the default styles](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/esm-date-input-polyfill.scss), which you may override with your own.
 
 * **Polyfills `valueAsDate` and `valueAsNumber`:**
 [Learn more about these properties.](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement#property-valueasdate). They behave as getters and setters.

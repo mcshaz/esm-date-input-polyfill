@@ -29,7 +29,7 @@ function getRollupBasePlugins({ buildTarget = buildTargets.npm }) {
     // replace({'process.env.NODE_ENV': JSON.stringify('production')}),
     terser({
       sourcemap: true,
-      output: { preamble: '// @license MIT - https://github.com/brianblakely/esm-date-input-polyfill' },
+      output: { preamble: '// @license MIT - https://github.com/mcshaz/esm-date-input-polyfill' },
     }),
   ];
   if (buildTarget === buildTargets.browserModule || buildTarget === buildTargets.browserNoModule) {
