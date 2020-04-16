@@ -48,7 +48,7 @@ Returns
  - Older browsers will download the full executable. see https://github.com/mcshaz/esm-date-input-polyfill/tree/master/examples and the rollup config at https://github.com/mcshaz/esm-date-input-polyfill/blob/master/rollup.config.js. 
  - Check if the script has already been run in the common file the 2 enty files point to (a problem with Safari 10 respecting `<script type="module" src="...">` but _not_ respecting `<script nomodule src="...">`).
 ```javascript
-import { polyfillDateIfRequired } from './dist/polyfill-date-if-required-dynamic-import.mjs';
+import { polyfillDateIfRequired } from './dist/polyfill-date-if-required.mjs';
 if (window.__my_script_loaded) { // https://gist.github.com/samthor/64b114e4a4f539915a95b91ffd340acc
     throw new error("[my-script] has been executed twice - usually a Safari bug");
 }

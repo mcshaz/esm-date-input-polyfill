@@ -13,8 +13,9 @@
       <fieldset>
         <legend>native date input (if supported):</legend>
         <p>
-          <input type="date" value="2020-04-05" min="2020-04-03" max="2020-04-19" lang="de-DE" >
+          <input id="native-date" type="date" value="2020-04-05" min="2020-04-03" max="2020-04-19" lang="de-DE" >
           this should have the current date 2020-04-05 and only allow a minimum date of 2020-04-03 and maximum 2020-04-19.
+          lang="de-DE", which should only effect the date input display if a de language is installed on the browser.
         </p>
         <p>
           <label>value:

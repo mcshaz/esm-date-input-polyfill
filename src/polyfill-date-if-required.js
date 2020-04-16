@@ -1,5 +1,5 @@
-import { dateInputIsSupported } from './dateInputIsSupported.js';
-import { forcePickerAttr } from './FindInputsHelper.js'
+import { dateInputIsSupported } from './date-input-is-supported.js';
+import { forcePickerAttr } from './find-inputs-helper.js'
 
 // Run the above code on any <input type="date"> in the document, also on dynamically created ones.
 // Check if type="date" is supported.
@@ -7,7 +7,7 @@ export function polyfillDateIfRequired({ watchForInsert = false, allowForcePicke
   if (dateInputIsSupported && !(allowForcePicker && document.querySelector(`[${forcePickerAttr}]`))) {
     return Promise.resolve();
   } else {
-    return import('./addPickers.js').then((module) => {
+    return import('./add-pickers.js').then((module) => {
       return new Promise((resolve, _reject) => {
         let pickerAdded = false;
         const loaded = () => {

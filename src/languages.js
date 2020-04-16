@@ -1,5 +1,6 @@
 import { getLocaleFormat, decreaseLocaleSpecificity } from "./locales.js";
 
+// localeNames array is assumed to be already converted to lower case
 export function getLanguageInfo(localeNames) {
     const languages = getLanguages();
     const fmt = getLocaleFormat(localeNames);

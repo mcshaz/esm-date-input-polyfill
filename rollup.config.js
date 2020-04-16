@@ -52,7 +52,7 @@ function getRollupBasePlugins({ buildTarget = buildTargets.npm }) {
 const moduleConfig = [
   // create library - note ES modules = Node >= 13.2.0
   {
-    input: 'src/polyfill-date-if-required-dynamic-import.js',
+    input: 'src/polyfill-date-if-required.js',
     output: {
       dir: 'dist',
       format: 'esm',
@@ -69,7 +69,7 @@ const moduleConfig = [
   // window.nodepDateInputPolyfill
   // to polyfill run window.nodepDateInputPolyfill.polyfillDateIfRequired()
   {
-    input: 'src/polyfill-date-if-required-dynamic-import.js',
+    input: 'src/polyfill-date-if-required.js',
     output: {
       file: 'dist/iife/esm-date-input-polyfill.js',
       format: 'iife',

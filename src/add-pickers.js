@@ -1,6 +1,6 @@
-import Picker from './Picker.js';
-import Input from './Input.js';
-import { FindInputsHelper } from './FindInputsHelper.js';
+import Picker from './picker.js';
+import Input from './input.js';
+import { FindInputsHelper } from './find-inputs-helper.js';
 
 export function addPickers({ watchForInsert = false, allowForcePicker = false, yrsBack = 80, yrsFwd = 20 } = {}) {
     Picker.instance = new Picker({yrsBack, yrsFwd});

@@ -1,4 +1,5 @@
 // Localizations for UI text.
+// localeNames array is assumed to be already converted to lower case
 export function getLocaleFormat(localeNames) {
   const locales = [
     ["D. M. Y",
@@ -28,20 +29,19 @@ export function getLocaleFormat(localeNames) {
     ["Y-M-D",
       '_fr-ca_km_km-kh_ko_ko-kr_pl_pl-pl_se-se_si_si-lk_sma_sma-se_smj_smj-se_sq_sq-al_sv_sv-se_ug_ug-cn_'],
   ];
-  const localeCpy = localeNames.map((l) => l.toLowerCase());
-  for (let i = 0; i < localeCpy.length; ++i) {
-    const srchStr = '_' + localeCpy[i] + '_';
+  for (let i = 0; i < localeNames.length; ++i) {
+    const srchStr = '_' + localeNames[i] + '_';
     const found = locales.find((l) => l[1].includes(srchStr));
     if (found) {
-      return { locale: localeCpy[i], format: found[0], parseLocale: parseFromFormat(found[0]) } ;
+      return { locale: localeNames[i], format: found[0], parser: dmyFormatToParser(found[0]) } ;
     }
-    const decrSpec = decreaseLocaleSpecificity(localeCpy[i])
+    const decrSpec = decreaseLocaleSpecificity(localeNames[i])
     if (decrSpec) {
-      localeCpy.push(decrSpec);
+      localeNames.push(decrSpec);
     }
   }
   const format = "Y-M-D";
-  return { locale: "en", format, parseLocale: parseFromFormat(format) };
+  return { locale: "en", format, parseLocale: dmyFormatToParser(format) };
 }
 
 export function decreaseLocaleSpecificity(localeName) {
@@ -52,7 +52,7 @@ export function decreaseLocaleSpecificity(localeName) {
   return returnVar;
 }
 
-export function parseFromFormat(format) {
+export function dmyFormatToParser(format) {
   let yPos = format.indexOf('Y');
   let mPos = format.indexOf('M');
   let dPos;
@@ -72,21 +72,24 @@ export function parseFromFormat(format) {
       dPos = 2;
     }
   }
-  format = format.replace(/\./g, '\\.')
+  format = format.replace(/\./g, '\\.') // note period is the only charachter requiring escaping in the formats above
     .replace('Y', '([12]\\d{3})')
     .replace('M', '([01]?\\d)')
     .replace('D', '([0-3]?\\d)');
-  const localeDtRx = new RegExp(format);
-  return (dtStr) => {
-    const dateMatch = localeDtRx.exec(dtStr);
-    if (!dateMatch) { return null; }
-    const yr = parseInt(dateMatch[yPos], 10);
-    const mth = parseInt(dateMatch[mPos], 10) - 1;
-    const dt = parseInt(dateMatch[dPos], 10);
-    const returnVar = new Date(yr, mth, dt);
-    if (returnVar.getFullYear() !== yr || returnVar.getMonth() !== mth || returnVar.getDate() !== dt) {
-      return null;
+  const localeDateRegExp = new RegExp(format);
+  return {
+    pattern: format.replace(/[)()]/g,''),
+    parse(dtStr) {
+      const dateMatch = localeDateRegExp.exec(dtStr);
+      if (!dateMatch) { return null; }
+      const yr = parseInt(dateMatch[yPos], 10);
+      const mth = parseInt(dateMatch[mPos], 10) - 1;
+      const dt = parseInt(dateMatch[dPos], 10);
+      const returnVar = new Date(yr, mth, dt);
+      if (returnVar.getFullYear() !== yr || returnVar.getMonth() !== mth || returnVar.getDate() !== dt) {
+        return null;
+      }
+      return returnVar;
     }
-    return returnVar;
   }
 }

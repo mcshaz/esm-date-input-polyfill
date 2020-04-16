@@ -1,7 +1,9 @@
-import Picker from './Picker.js';
+import Picker from './picker.js';
 import { getLanguageInfo } from './languages.js';
-import { pickerAppliedAttr } from './FindInputsHelper.js';
-import { dateInputIsSupported } from './dateInputIsSupported.js'
+import { pickerAppliedAttr } from './find-inputs-helper.js';
+import { dateInputIsSupported } from './date-input-is-supported.js';
+import { LookupResult } from './lookup-result.js';
+import {closestWithProp} from './closest-with-prop.js';
 
 const validIsoDateRx = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -9,27 +11,18 @@ export default class Input {
   constructor(input) {
     this.element = input;
     this.element.setAttribute(pickerAppliedAttr, '');
+    this.element.setAttribute('autocomplete', 'off'); // otherwise autocomplete suggestion hides date picker
     if (dateInputIsSupported) {
       // this wil both prevent the native datepicker displaying AND allow asigning a value attribute which is not ISO8601 compliant
       this.element.type = 'date-polyfill';
       // this.element.addEventListener('click', preventDefault);
     }
 
-    let langEl = this.element,
-        lang = '';
-
-    while(langEl.parentNode) {
-      lang = langEl.getAttribute('lang');
-      if(lang) {
-        break;
-      }
-      langEl = langEl.parentNode;
-    }
-
-    this.setLocaleText(lang);
+    this.setLocaleText(closestWithProp(this.element, 'lang'));
     if (!this.element.placeholder) {
       this.element.placeholder = this.localeText.format.replace('M', 'mm').replace('D', 'dd').replace('Y', 'yyyy');
     }
+    this.element.pattern = this.localeText.parser.pattern;
     const valuePropDescriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(this.element), 'value')
     if (valuePropDescriptor === null) {
       valuePropDescriptor = { get:() => this.element.getAttribute('value') || '', set:(value) => this.element.setAttribute('value', value) };
@@ -130,7 +123,7 @@ export default class Input {
         if (requireParse) {
           const self = this;
           setTimeout(() => {
-            const parseDt = self.localeText.parseLocale(self.element.textValue);
+            const parseDt = self.localeText.parser.parse(self.element.textValue);
             if (parseDt) {
               parseDt.setTime(parseDt.getTime() - parseDt.getTimezoneOffset() * 60000);
             }
@@ -165,16 +158,19 @@ export default class Input {
   }
 
   setLocaleText(elementLang) {
-    let preferredLocales = window.navigator.languages
-      ? [...window.navigator.languages]
-      : [ window.navigator.userLanguage || window.navigator.language ];
-    // user browser preference 1st then element language - arguably should unshift here, or could get complex and 
-    // differentiate element language only (length===2) from language and culture both defined on a containing element
-    if (elementLang) { preferredLocales.push(elementLang); }
+    let preferredLocales = (window.navigator.languages
+      ? window.navigator.languages
+      : [ window.navigator.userLanguage || window.navigator.language ]).map((l) => l.toLowerCase());
+    
+    if (elementLang) {
+      // trying to emmulate what a native browser might/should do - 1 thing for certain is if the language is not installed on the browser it will not be used
+      elementLang = elementLang.match(/^[a-z]+/)[0].toLowerCase();
+      const matchesElLang = new LookupResult((l) => l.startsWith(elementLang));
+      preferredLocales.forEach((l) => matchesElLang.add(l));
+      preferredLocales = matchesElLang.get(true).concat(matchesElLang.get(false));
+    }
 
     const li = getLanguageInfo(preferredLocales);
-    // First, look for an exact match to the provided locale.
-    // for (const pl of preferredLocales) { - with current core-js polyfills this will import Symbol polyfill, which is unnecessary bloat
 
     this.locale = li.locale;
     this.localeText = li;

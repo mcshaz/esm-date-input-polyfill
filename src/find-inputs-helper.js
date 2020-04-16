@@ -1,4 +1,4 @@
-import { dateInputIsSupported } from './dateInputIsSupported.js';
+import { dateInputIsSupported } from './date-input-is-supported.js';
 const pickerAppliedAttr = 'data-has-picker';
 const forcePickerAttr = 'data-force-date-input-polyfill';
 
