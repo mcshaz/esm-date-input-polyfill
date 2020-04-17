@@ -83,9 +83,8 @@ Using the module/nomodule approach. Have a look at the example in this repositor
  - Create an entry (input) [.js or .mjs or .ts] [file for browsers which support ECMAScript modules](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/examples/esm.module.js), which includes a polyfill for dynamic import in browsers which support modules but not dynamic import statements. 
  - Have a [seperate entry file for legacy browsers](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/examples/esm.nomodule.js).
  - Modern browsers will only download a tiny file to check for date-input support, and download the appropriate polyfill only if date inputs are not natively supported.
- - Older browsers will download the full executable. see the example directory and the [rollup config](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/rollup.config.js) within this repository. 
+ - Older browsers will download the full executable. See an example [rollup config here](https://github.com/mcshaz/simple-nicu-calc/blob/master/rollup.config.js). 
  - Check if the script has already been run in the [common file](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/examples/esm-page-script.js) that the 2 enty files point to (a problem with Safari 10 respecting `<script type="module" src="...">` but _not_ respecting `<script nomodule src="...">`).
-
 ```js
 import { polyfillIfRequired } from 'polyfill-if-required.mjs';
 if (window.__my_script_loaded) { // https://gist.github.com/samthor/64b114e4a4f539915a95b91ffd340acc
@@ -94,6 +93,17 @@ if (window.__my_script_loaded) { // https://gist.github.com/samthor/64b114e4a4f5
 window.__my_script_loaded = true;
 export function myScript() {
     polyfillIfRequired({watchForInsert: true}).then(function() {
+```
+ - **Note** the distributable code for this polyfill has been bundled and minified, but intentionally it has not been transpiled by a tool such as babel. This ensures the smallest size file for modern browsers. You will therefore need to make sure you include esm-date-input-polyfill in your babel transpiling and automatic `js` polyfilling process for older browsers. Many bundling config files exclude all node modules with `{ exclude: /node_modules\ }`. Instead, change this to something like:
+ ```js
+ rules: [
+  {
+    test: /\.m?js$/,
+    exclude: /node_modules\/core-js/, 
+// OR exlude: /node_modules/, include: /node_modules\/esm-date-input-polyfill/
+    use: {
+      loader: 'babel-loader',
+      ...
 ```
 
 ### Script Tag:
