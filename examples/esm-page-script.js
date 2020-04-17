@@ -7,8 +7,11 @@ if (window.__esm_page_script_loaded) {
 window.__esm_page_script_loaded = true;
 
 export function esmPageScript() {
-    // note we need to wait as if we don't and the date input is polyfilled,
-    // the initial valueAsDate reference will not have been polyfilled (and therefore undefined)
+    // setting the value min & max to be around the current date, purely so that the style of the current date
+    // can be displayed, plus the today button can be used.
+    setDateAttributes();
+    // note we need to wait for the promise to resolve, as if we don't and the date input is polyfilled,
+    // the initial valueAsDate property will not have been polyfilled (and therefore undefined)
     polyfillIfRequired().then(() => {
         Array.from(document.getElementsByTagName('output')).forEach((o) => {
             const outputFor = document.getElementById(o.getAttribute('for'));
@@ -20,5 +23,25 @@ export function esmPageScript() {
                 outputFor.addEventListener('input', onInput);
             }
         });
+    });
+}
+
+function setDateAttributes() {
+    const d = new Date();
+    const asIso = (dt) => dt.toISOString().slice(0, 10);
+    d.setDate(d.getDate() - 2);
+    updateDateAttrAndDescriptions('value', asIso(d));
+    d.setDate(d.getDate() - 4);
+    updateDateAttrAndDescriptions('min', asIso(d));
+    d.setDate(d.getDate() + 15);
+    updateDateAttrAndDescriptions('max', asIso(d));
+}
+
+function updateDateAttrAndDescriptions(attrName, value) {
+    Array.from(document.querySelectorAll(`input[${attrName}]`)).forEach((el) => {
+        el.setAttribute(attrName, value);
+    });
+    Array.from(document.querySelectorAll(`span.date-${attrName}`)).forEach((el) => {
+        el.innerHTML = value;
     });
 }

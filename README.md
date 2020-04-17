@@ -30,7 +30,7 @@ import { polyfillIfRequired } from 'esm-date-input-polyfill';
 polyfillIfRequired({
     watchForInsert: true,
 }).then((_polyfillWasInserted) =>
-    // we can now access the polyfilled properties such as value (which will now be yyyy-mm-dd format) 
+    // we can now safely access the polyfilled properties valueAsDate and valueAsNumber
     document.querySelector('input[type=date]').valueAsDate = new Date())
 );
 ```
@@ -120,13 +120,16 @@ Execute `dateInputPolyfill.polyfillIfRequired()` and if required with an option 
 * `getAttribute('value')` and `setAttribute('value', ...)` and the element's `.textValue` property will only reflect the field's (localised) text content. 
 
 * In order to work with the field's underlying value, you must get/set its
-`value`, `valueAsDate`, or `valueAsNumber` properties.
+`value`, `valueAsDate`, or `valueAsNumber` _property_, *not* its _attribute_.
+The value attribute can, however, be safely set in yyyy-mm-dd format _before_
+the polyfillIfRequired() method is executed.
+
 
 * Per the native implementation, polyfilled date fields will only accept
 values in the format `yyyy-MM-dd`.
 
 * When submitting an HTML form, the browser will submit the date field's `value`
-attribute (i.e. its text content), not the normalized content of the field's
+*attribute* (i.e. its text content), not the normalized content of the field's
 `value` *property*.
 
     If you don't want that, one potential workaround is to change
@@ -145,6 +148,7 @@ Run `npm run build`
 Given the lifecycle of browsers which do not natively support date-inputs, there no plans to add the features below, however if this project were to have a roadmap:
 - placeholder currently uses english characters e.g. `dd/mm/yyyy`. This should clearly be language specific.
 - separate out language files and dynamically retrieve only the 1 language file required.
+- have a cross inside the right of the input which deletes the selected date. At present to delete the date, the text within the input can be selected and deleted.
 
 ## Thanks
 Some words of appreciation for those who have submitted tickets, pull requests,

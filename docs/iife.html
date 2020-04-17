@@ -35,9 +35,11 @@
           <legend>With Value and Min/Max Attributes</legend>
           <p>
             <label>Date:
-              <input type="date" id="value-attr-date" value="2020-04-05" min="2020-04-03" max="2020-04-07" lang="de-DE">
+              <input type="date" id="value-attr-date" value="2020-04-05" min="2020-04-03" max="2020-04-19" lang="de-DE">
             </label>
-            this should have the current date 2020-04-05 and only allow a minimum date of 2020-04-03 and maximum 2020-04-07.
+            This should have the date value set to <span class="iso-date date-value">2020-04-05</span>
+            and only allow a minimum date of <span class="iso-date date-min">2020-04-03</span>
+            and maximum <span class="iso-date date-max">2020-04-19</span>.
           </p>
           <p>
             <label>value:
@@ -73,9 +75,11 @@
         <legend>native date input (if supported):</legend>
         <p>
           <label>Date:
-            <input type="date" id="native-date" value="2020-04-05" min="2020-04-03" max="2020-04-07" lang="de-DE" >
+            <input type="date" id="native-date" value="2020-04-05" min="2020-04-03" max="2020-04-19" lang="de-DE" >
           </label>
-            this should have the current date 2020-04-05 and only allow a minimum date of 2020-04-03 and maximum 2020-04-07.
+          This should have the date value set to <span class="iso-date date-value">2020-04-05</span>
+          and only allow a minimum date of <span class="iso-date date-min">2020-04-03</span>
+          and maximum <span class="iso-date date-max">2020-04-19</span>.
         </p>
         <p>
           <label>value:
@@ -92,6 +96,10 @@
     </form>
     <script>
       (function() {
+        // setting the value min & max to be around the current date, purely so that the style of the current date
+        // can be displayed, plus the today button can be used.
+        setDateAttributes();
+
         dateInputPolyfill.polyfillIfRequired({watchForInsert: true, forcePolyfill: true});
 
         var outputs = document.getElementsByTagName('output');
@@ -114,6 +122,30 @@
               : function(el) { o.innerHTML = String(el.target.valueAsDate); };
             outputFor.addEventListener('input', onInput);
           }
+        }
+
+        function setDateAttributes() {
+            const d = new Date();
+            const asIso = function(dt) { return dt.toISOString().slice(0, 10) };
+            d.setDate(d.getDate() - 2);
+            updateDateAttrAndDescriptions('value', asIso(d));
+            d.setDate(d.getDate() - 4);
+            updateDateAttrAndDescriptions('min', asIso(d));
+            d.setDate(d.getDate() + 15);
+            updateDateAttrAndDescriptions('max', asIso(d));
+        }
+
+        function updateDateAttrAndDescriptions(attrName, value) {
+            querySelectorForEach('input[' + attrName + ']', function(el) {
+                el.setAttribute(attrName, value);
+            });
+            querySelectorForEach('span.date-' + attrName, function(el) {
+                el.innerHTML = value;
+            });
+        }
+
+        function querySelectorForEach(selector, delegate) {
+          Array.prototype.forEach.call(document.querySelectorAll(selector), delegate);
         }
       })();
     </script>
