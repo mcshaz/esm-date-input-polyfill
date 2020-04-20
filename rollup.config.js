@@ -7,8 +7,9 @@ import postcss from 'rollup-plugin-postcss';
 import 'core-js';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
+import typescript from '@rollup/plugin-typescript';
 import del from 'rollup-plugin-delete';
-import copy from 'rollup-plugin-copy'
+import copy from 'rollup-plugin-copy';
 // import { eslint } from "rollup-plugin-eslint";
 // import path from 'path';
 
@@ -21,7 +22,7 @@ const buildTargets = {
 function getRollupBasePlugins({ buildTarget = buildTargets.npm }) {
   const plugins = [
     resolve(),
-    commonjs(),
+    // commonjs(),
     postcss({
       extract: false,
       modules: false,
@@ -40,21 +41,24 @@ function getRollupBasePlugins({ buildTarget = buildTargets.npm }) {
       : { esmodules: true };
     plugins.push(babel({
         exclude: /node_modules/,
+        //extensions: ['.js', '.ts'],
         presets: [['@babel/preset-env', {
           targets,
           useBuiltIns: 'usage',
           debug: false,
           corejs: 3,
-        }]],
+        }], /* ['@babel/typescript'] */],
       }));
+  } else  { // if (buildTarget === buildTargets.npm)
+    plugins.push(typescript());
   }
   return plugins;
 }
 
 const moduleConfig = [
-  // create library - note ES modules = Node >= 13.2.0
+  // create ECMAScript Modules library - note ES modules = Node >= 13.2.0
   {
-    input: 'src/polyfill-if-required.js',
+    input: 'src/polyfill-if-required.ts',
     output: {
       dir: 'dist',
       format: 'esm',
@@ -64,12 +68,12 @@ const moduleConfig = [
     },
     plugins: [
       ...getRollupBasePlugins({ buildTarget: buildTargets.npm }),
-      del({ targets: ['dist/*', 'docs/dist/*'] })
+      del({ targets: ['dist/*', 'docs/dist/*'] }),
     ],
   },
-  // create library - note ES modules = Node >= 13.2.0
+  // create Common JS library
   {
-    input: 'src/polyfill-if-required.js',
+    input: 'src/polyfill-if-required.ts',
     output: {
       dir: 'dist/cjs',
       format: 'cjs',
@@ -77,13 +81,15 @@ const moduleConfig = [
       chunkFileNames: '[name]-[hash].cjs.mjs',
       sourcemap: false,
     },
-    plugins: getRollupBasePlugins({ buildTarget: buildTargets.npm }),
+    plugins: [
+      ...getRollupBasePlugins({ buildTarget: buildTargets.npm }),
+    ]
   },
   // Legacy config for anyone who wants to insert the <script> and have defined
   // window.nodepDateInputPolyfill
   // to polyfill run window.nodepDateInputPolyfill.polyfillIfRequired()
   {
-    input: 'src/polyfill-if-required.js',
+    input: 'dist/polyfill-if-required.mjs',
     output: {
       file: 'dist/iife/esm-date-input-polyfill.js',
       format: 'iife',

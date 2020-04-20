@@ -16,7 +16,7 @@ export function esmPageScript() {
         Array.from(document.getElementsByTagName('output')).forEach((o) => {
             const outputFor = document.getElementById(o.getAttribute('for'));
             if (outputFor) {
-                var onInput = o.className === 'date-value'
+                const onInput = o.className === 'date-value'
                     ? () => o.innerHTML = outputFor.value
                     : () => o.innerHTML = String(outputFor.valueAsDate);
                 onInput();
