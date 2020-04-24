@@ -32,8 +32,12 @@ polyfillIfRequired({
 }).then((polyfillsInserted) => {
     // we can now safely access the polyfilled properties valueAsDate and valueAsNumber
     // the polyfillsInserted parameter of this function will be null if native date inputs are supported (noting the forcePollyfill option was not set to true)
+    const nowUtc = new Date();
+    // remember that native date inputs display the date as per UTC & usually we want the local date the client is in displayed to the user: hence the next line.
+    nowUtc.setTime(nowUtc.getTime() - nowUtc.getTimezoneOffset() * 60000);
     for (const i of (polyfillsInserted || document.querySelectorAll('input[type=date]'))) {
-        i.element.valueAsDate = new Date();
+        // alternatively we could set i.element.value = new Date().toISOString().slice(0,10); without adjusting the time for timezone offset. In that case, it would be unnecessary to wait until the polyfill promise had been resolved.
+        i.element.valueAsDate = nowUtc;
     }
 });
 ```
