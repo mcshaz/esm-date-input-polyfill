@@ -34,7 +34,6 @@ export class Input implements LocaleDateInfo {
         this.dateHandler = cultureInfo.dateHandler;
         this.selectedLocale = cultureInfo.selectedLocale;
         this.translation = cultureInfo.translation;
-        
         if (!this.element.placeholder) {
             this.element.placeholder = this.dateHandler.placeholder();
         }
@@ -141,25 +140,30 @@ export class Input implements LocaleDateInfo {
             if (willRequirePing) {
                 if (willRequireParse) {
                     setTimeout(() => {
+                        let pingSync = () => {
+                            const picker = Picker.getInstance();
+                            picker.pingInput();
+                            picker.sync();
+                        }
                         let parsedDt = this.dateHandler.parse(this.element.textValue);
                         if (parsedDt instanceof Date) {
                             parsedDt.setTime(parsedDt.getTime() - parsedDt.getTimezoneOffset() * 60000);
+                            if (parsedDt.getTime() !== this.element.valueAsNumber) {
+                                this.element.valueAsDate = parsedDt;
+                                pingSync();
+                            }
                         } else {
                             if (parsedDt === ParseResult.invalidDate 
                                     || parsedDt === ParseResult.invalidMonth
                                     || parsedDt === ParseResult.invalidYear) {
                                 this.element.setCustomValidity(this.dateHandler.placeholder(parsedDt));
                             } else {
-                                this.element.setCustomValidity('');
+                                this.element.setCustomValidity(''); // let native pattern validation do its work
                             }
-                            parsedDt = new Date(NaN);
-                        }
-                        if (+parsedDt !== this.element.valueAsNumber
-                                || isNaN(parsedDt as any) !== isNaN(this.element.valueAsNumber)) {
-                            this.element.valueAsDate = parsedDt;
-                            const picker = Picker.getInstance();
-                            picker.pingInput();
-                            picker.sync();
+                            if (this.element._datePolyfillVal !== void 0) {
+                                this.element._datePolyfillVal = void 0;
+                                pingSync();
+                            }
                         }
                     }, 1);
                 } else {

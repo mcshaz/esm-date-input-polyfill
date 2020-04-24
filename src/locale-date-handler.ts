@@ -58,9 +58,12 @@ export class LocaleDateHandler {
     }
 
     placeholder(highlight?: DatePartKey) {
-        let returnVar = this._replaceWithHighlight( 'D', this.placeholderChars.dd, highlight);
-        returnVar = this._replaceWithHighlight('M', this.placeholderChars.mm, highlight);
-        returnVar = this._replaceWithHighlight('Y', this.placeholderChars.yyyy, highlight);
+        let returnVar = this.format;
+        let replaceWithHighlight = (find: DatePartKey, replace: string, highlight?: DatePartKey) =>
+            returnVar = returnVar.replace(find, highlight === find ? `**${replace.toUpperCase()}**` : replace);
+        replaceWithHighlight( 'D', this.placeholderChars.dd, highlight);
+        replaceWithHighlight('M', this.placeholderChars.mm, highlight);
+        replaceWithHighlight('Y', this.placeholderChars.yyyy, highlight);
         return returnVar;
     }
 
@@ -72,7 +75,4 @@ export class LocaleDateHandler {
             .replace('D', ymd[2]);
     }
 
-    private _replaceWithHighlight(find: DatePartKey, replace: string, highlight?: DatePartKey) {
-        return this.format.replace(find, highlight === find ? `**${replace.toUpperCase()}**` : replace);
-    }
 }

@@ -1,12 +1,12 @@
 import { polyfillIfRequired } from './../dist/polyfill-if-required.mjs';
 
-if (window.__esm_page_script_loaded) {
+if (window.__egModuleLoadPageScript) {
     // https://gist.github.com/samthor/64b114e4a4f539915a95b91ffd340acc
     throw new Error('esm-date-input-polyfill has been executed twice - usually a Safari bug');
 }
-window.__esm_page_script_loaded = true;
+window.__egModuleLoadPageScript = true;
 
-export function esmPageScript() {
+export function egModuleLoadPageScript() {
     // setting the value min & max to be around the current date, purely so that the style of the current date
     // can be displayed, plus the today button can be used.
     setDateAttributes();
@@ -38,7 +38,7 @@ function setDateAttributes() {
 }
 
 function updateDateAttrAndDescriptions(attrName, value) {
-    Array.from(document.querySelectorAll(`input[${attrName}]`)).forEach((el) => {
+    Array.from(document.querySelectorAll(`input[type="date*"][${attrName}]`)).forEach((el) => {
         el.setAttribute(attrName, value);
     });
     Array.from(document.querySelectorAll(`span.date-${attrName}`)).forEach((el) => {

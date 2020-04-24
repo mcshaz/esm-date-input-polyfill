@@ -114,6 +114,13 @@ export class Picker {
         }, passiveOpt);
     }
 
+    private get dateAtUtcMidnight() {
+        const returnVar = new Date(this.date);
+        returnVar.setHours(0, 0, 0, 0);
+        returnVar.setTime(returnVar.getTime() - returnVar.getTimezoneOffset() * 60000);
+        return returnVar;
+    }
+
     // Hide.
     hide() {
         this.container.setAttribute('data-open', String(this.isOpen = false));
@@ -171,14 +178,7 @@ export class Picker {
         if (!this.input) {
             throw new Error('You must attach the polyfilled input with attachTo before calling setInput');
         }
-        this.input.element.value =
-            `${
-                this.date.getFullYear()
-            }-${
-                String(this.date.getMonth() + 1).padStart(2,'0')
-            }-${
-                String(this.date.getDate()).padStart(2,'0')
-            }`;
+        this.input.element.valueAsDate = this.dateAtUtcMidnight;
 
         this.input.element.focus();
         setTimeout(()=> { // IE wouldn't hide, so in a timeout you go.
@@ -340,12 +340,15 @@ export class Picker {
         return theSelect;
     }
 
-    static utcDateToLocal(dt?: Date | number | string) {
-        if (!dt || isNaN(dt as any)) {
+    static utcDateToLocal(dt?: Date | number | string | null) {
+        if (dt === '' || dt === void 0 || dt === null) {
             return null;
         }
         const returnVar = new Date(dt);
-        returnVar.setTime(returnVar.getTime() + returnVar.getTimezoneOffset()*60000);
+        if (isNaN(returnVar.getTime())) {
+            return null;
+        }
+        returnVar.setTime(returnVar.getTime() + returnVar.getTimezoneOffset() * 60000);
         return returnVar;
     }
 }

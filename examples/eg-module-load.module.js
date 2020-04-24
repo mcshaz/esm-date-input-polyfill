@@ -1,4 +1,4 @@
-import { esmPageScript } from './esm-page-script.js';
+import { egModuleLoadPageScript } from './eg-module-load-page-script.js';
 
 import dynamicImportPolyfill from 'dynamic-import-polyfill';
 
@@ -6,4 +6,4 @@ import dynamicImportPolyfill from 'dynamic-import-polyfill';
 // If your modules are hosted in a sub-directory, it must be specified here.
 dynamicImportPolyfill.initialize({modulePath: 'examples/dist'});
 
-esmPageScript();
+egModuleLoadPageScript();
