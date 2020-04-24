@@ -83,7 +83,7 @@ Using the module/nomodule approach. Have a look at the example in this repositor
  - Create an entry (input) [.js or .mjs or .ts] [file for browsers which support ECMAScript modules](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/examples/esm.module.js), which includes a polyfill for dynamic import in browsers which support modules but not dynamic import statements. 
  - Have a [seperate entry file for legacy browsers](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/examples/esm.nomodule.js).
  - Modern browsers will only download a tiny file to check for date-input support, and download the appropriate polyfill only if date inputs are not natively supported.
- - Older browsers will download the full executable. See an example [rollup config here](https://github.com/mcshaz/simple-nicu-calc/blob/master/rollup.config.js). 
+ - Older browsers will download the full executable. See an example [rollup config here](https://github.com/mcshaz/simple-nicu-calcs/blob/master/rollup.config.js). 
  - Check if the script has already been run in the [common file](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/examples/esm-page-script.js) that the 2 enty files point to (a problem with Safari 10 respecting `<script type="module" src="...">` but _not_ respecting `<script nomodule src="...">`).
 ```js
 import { polyfillIfRequired } from 'polyfill-if-required.mjs';
@@ -94,7 +94,7 @@ window.__my_script_loaded = true;
 export function myScript() {
     polyfillIfRequired({watchForInsert: true}).then(function() {
 ```
- - **Note** the distributable code for this polyfill has been bundled and minified, but intentionally it has not been transpiled by a tool such as babel. This ensures the smallest size file for modern browsers. You will therefore need to make sure you include esm-date-input-polyfill in your babel transpiling and automatic `js` polyfilling process for older browsers. Many bundling config files exclude all node modules with `{ exclude: /node_modules\ }`. Instead, change this to something like:
+ - **Note** the distributable code for this polyfill has been bundled and minified, but intentionally it has not been transpiled by a tool such as Babel. This ensures the smallest size file for modern browsers. You will therefore need to make sure you include esm-date-input-polyfill in your transpiling and automatic `js` polyfilling process for older browsers (usually with Babel). Many bundling config files exclude all node modules with `{ exclude: /node_modules/ }`. Instead, change this to something like:
  ```js
  rules: [
   {
@@ -107,7 +107,7 @@ export function myScript() {
 ```
 
 ### Script Tag:
-Execute `dateInputPolyfill.polyfillIfRequired()` and if required with an option object with the properties described above. See the example of this workflow [here](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/docs/iife.html).
+Execute `dateInputPolyfill.polyfillIfRequired()` and if required with an option object with the properties described above. See the example of this workflow [in the example html file here](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/docs/iife.html).
 
 
 ## Features
@@ -143,7 +143,7 @@ values in the format `yyyy-MM-dd`.
 `value` *property*.
 
     If you don't want that, one potential workaround is to change
-    the attribute upon form submission:
+    the attribute back to the property value upon form submission:
     ```js
     el.form.addEventListener('submit', (e)=> el.setAttribute('value', el.value));
     ```
@@ -158,7 +158,7 @@ Run `npm run build`
 Given the lifecycle of browsers which do not natively support date-inputs, there no plans to add the features below, however if this project were to have a roadmap:
 - placeholder currently uses english characters e.g. `dd/mm/yyyy`. This should clearly be language specific.
 - separate out language files and dynamically retrieve only the 1 language file required.
-- have a cross inside the right of the input which deletes the selected date. At present to delete the date, the text within the input can be selected and deleted.
+- have a cross inside the right side of the input which deletes the selected date. At present to delete the date, the text within the input can be selected and deleted.
 
 ## Thanks
 Some words of appreciation for those who have submitted tickets, pull requests,

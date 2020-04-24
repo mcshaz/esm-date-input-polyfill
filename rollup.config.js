@@ -12,6 +12,7 @@ import del from 'rollup-plugin-delete';
 import copy from 'rollup-plugin-copy';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 import url from 'rollup-plugin-url';
+import { readFile } from 'fs'
 
 
 const buildTargets = {
@@ -49,7 +50,8 @@ function getRollupBasePlugins({ buildTarget = buildTargets.npm }) {
       resolve(),
       commonJS(),
       url(), // required by sourcemaps (below) on windows filesystems to corectly interpret sourcemap location
-      sourcemaps());
+      sourcemaps({ exclude: /node_modules/ }) // exclude not working at the moment as a sourcemaps option
+    ); 
   } else {
     plugins.push(
       postcss({
