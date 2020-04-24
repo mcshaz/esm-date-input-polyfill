@@ -149,7 +149,9 @@ export class Input implements LocaleDateInfo {
                         if (parsedDt instanceof Date) {
                             parsedDt.setTime(parsedDt.getTime() - parsedDt.getTimezoneOffset() * 60000);
                             if (parsedDt.getTime() !== this.element.valueAsNumber) {
-                                this.element.valueAsDate = parsedDt;
+                                // assigning to the underlying field rather than property otherwise it can be really hard to alter values such as month as the input keeps changing values
+                                this.element._datePolyfillVal = parsedDt.getTime();
+                                this.validate();
                                 pingSync();
                             }
                         } else {

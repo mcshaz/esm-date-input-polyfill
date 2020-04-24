@@ -38,7 +38,8 @@ function setDateAttributes() {
 }
 
 function updateDateAttrAndDescriptions(attrName, value) {
-    Array.from(document.querySelectorAll(`input[type="date*"][${attrName}]`)).forEach((el) => {
+    // using the startswith (^) queryselector as this will get type="date" and type="date-polyfill" 
+    Array.from(document.querySelectorAll(`input[type^="date"][${attrName}]`)).forEach((el) => {
         el.setAttribute(attrName, value);
     });
     Array.from(document.querySelectorAll(`span.date-${attrName}`)).forEach((el) => {
