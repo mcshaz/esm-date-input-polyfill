@@ -80,8 +80,8 @@ How many years after (forward of) the current year the `year select` will displa
 
 ### Webpack / Rollup / Babel / ES:
 Using the module/nomodule approach. Have a look at the example in this repository:
- - Create an entry (input) [.js or .mjs or .ts] [file for browsers which support ECMAScript modules](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/examples/esm.module.js), which includes a polyfill for dynamic import in browsers which support modules but not dynamic import statements. 
- - Have a [seperate entry file for legacy browsers](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/examples/esm.nomodule.js).
+ - Create an entry (input) [.js or .mjs or .ts] [file for browsers which support ECMAScript modules](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/examples/eg-module-load.module.js), which includes a polyfill for dynamic import in browsers which support modules but not dynamic import statements. 
+ - Have a [seperate entry file for legacy browsers](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/examples/eg-module-load.nomodule.js).
  - Modern browsers will only download a tiny file to check for date-input support, and download the appropriate polyfill only if date inputs are not natively supported.
  - Older browsers will download the full executable. See an example [rollup config here](https://github.com/mcshaz/simple-nicu-calcs/blob/master/rollup.config.js). 
  - Check if the script has already been run in the [common file](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/examples/esm-page-script.js) that the 2 enty files point to (a problem with Safari 10 respecting `<script type="module" src="...">` but _not_ respecting `<script nomodule src="...">`).
