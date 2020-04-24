@@ -1,6 +1,6 @@
 {
   "name": "esm-date-input-polyfill",
-  "version": "6.1.2",
+  "version": "6.1.4",
   "deprecated": false,
   "description": "Automatically adds datepickers to input[type=date] on IE, Firefox, and macOS Safari.",
   "main": "dist/cjs/polyfill-if-required.cjs.js",

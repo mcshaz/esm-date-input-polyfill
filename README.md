@@ -29,10 +29,13 @@ Add to your project:
 import { polyfillIfRequired } from 'esm-date-input-polyfill';
 polyfillIfRequired({
     watchForInsert: true,
-}).then((_polyfillWasInserted) =>
+}).then((polyfillsInserted) => {
     // we can now safely access the polyfilled properties valueAsDate and valueAsNumber
-    document.querySelector('input[type=date]').valueAsDate = new Date())
-);
+    // the polyfillsInserted parameter of this function will be null if native date inputs are supported (noting the forcePollyfill option was not set to true)
+    for (const i of (polyfillsInserted || document.querySelectorAll('input[type=date]'))) {
+        i.element.valueAsDate = new Date();
+    }
+});
 ```
 
 * **Script Tag:** Copy `esm-date-input-polyfill.js` from `node_modules/esm-date-input-polyfill/dist/iife` and include it anywhere in your HTML. This will use an Immediately invoked function expression (IIFE) which creates the object `dateInputPolyfill` as a global property (i.e. on the `window object`).
@@ -49,8 +52,8 @@ Will initiate the polyfill.
 
 #### function returns
 Returns a `promise` which is resolved:
-- If the browser supports date inputs, the promise will resolve immediately (the `then` callback `success function` argument will have a value of `false`).
-- If the browser _does not_ natively support date inputs _or_ the `forcePolyfill` option [see below] is `true`, the promise will return after the DOM content has been loaded and all date-input elements in the document (at that point in time) have been polyfilled.The `then` callback `success function` argument will have a value of `true`.
+- If the browser supports date inputs, the promise will resolve immediately (the `then` callback `success function` argument will have a value of `null`).
+- If the browser _does not_ natively support date inputs _or_ the `forcePolyfill` option [see below] is `true`, the promise will return after the DOM content has been loaded and all date-input elements in the document (at that point in time) have been polyfilled.The `then` callback `success function` argument will contain an `array` of polyfilled `input` [instances](https://github.com/mcshaz/esm-date-input-polyfill/blob/master/dist/types/input.d.ts).
 
 ### Options may be provided to the polyfillIfRequired function:
 
